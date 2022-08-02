@@ -16,32 +16,43 @@
         </form>
 
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.js"></script>
         <script>
           // step 2 建立連線
-          var socket = io()
+          const socket = io()
+          socket.emit('login', {
+            userName: '{{loginUser.name}}',
+            avatar: '{{loginUser.avatar}}'
+          })
 
           // 抓取必要的 DOM
-          var messages = document.getElementById('messages')
-          var form = document.getElementById('form')
-          var input = document.getElementById('input')
+          const messages = document.getElementById('messages')
+          const form = document.getElementById('form')
+          const input = document.getElementById('input')
 
           // input 欄位掛上監聽器 做 socket.emit 傳入 server
           form.addEventListener('submit', function (e) {
             e.preventDefault()
             if (input.value) {
+              // socket.emit 可以針對頻道傳送物件
               socket.emit('chat message', input.value)
               input.value = ''
             }
           })
 
           // socket 監聽從 server 在 chat message 傳來的資料   
-          socket.on('chat message', function (msg) {
-            var item = document.createElement('li')
-            item.textContent = msg
+          socket.on('chat message', function (receivedObj) {
+            const item = document.createElement('li')
+            item.textContent = receivedObj.message
             messages.appendChild(item)
             window.scrollTo(0, document.body.scrollHeight)
-          });
+          })
+
+          socket.on('broadcast', (data) => {
+            const item = document.createElement('li')
+            item.textContent = data.description
+            messages.appendChild(item)
+            window.scrollTo(0, document.body.scrollHeight)
+          })
         </script>
 
       </div>

@@ -63,13 +63,12 @@ const userController = {
         if (user) {
           user.isFollowed = user.Followings.some(u => u.id === targetUser.id)
         }
-        const tweetsData = tweets
-          .map(t => ({
-            ...t.toJSON(),
-            likedCount: t.Likes.length,
-            repliedCount: t.Replies.length,
-            isLiked: t.Likes.some(like => like.UserId === user.id)
-          }))
+        const tweetsData = tweets.map(t => ({
+          ...t.toJSON(),
+          likedCount: t.Likes.length,
+          repliedCount: t.Replies.length,
+          isLiked: t.Likes.some(like => like.UserId === user.id)
+        }))
         res.locals.tweetsLength = tweets.length
         res.render('profile', { targetUser: targetUser.toJSON(), tweets: tweetsData, user })
       })
@@ -123,13 +122,12 @@ const userController = {
         if (user) {
           user.isFollowed = user.Followings.some(u => u.id === targetUser.id)
         }
-        const likesData = likes
-          .map(l => ({
-            ...l.toJSON(),
-            likedCount: l.Tweet.Likes.length,
-            repliedCount: l.Tweet.Replies.length,
-            isLiked: user? l.Tweet.Likes.some(like => like.UserId === user.id) : false
-          }))
+        const likesData = likes.map(l => ({
+          ...l.toJSON(),
+          likedCount: l.Tweet.Likes.length,
+          repliedCount: l.Tweet.Replies.length,
+          isLiked: user ? l.Tweet.Likes.some(like => like.UserId === user.id) : false
+        }))
         res.locals.tweetsLength = targetUser.Tweets.length
         res.render('profile', { targetUser: targetUser.toJSON(), likes: likesData, user })
       })
@@ -208,6 +206,10 @@ const userController = {
     } catch (err) {
       next(err)
     }
+  },
+
+  getChatRoom: (req, res) => {
+    res.render('user_chatroom')
   }
 }
 
