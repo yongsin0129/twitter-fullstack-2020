@@ -13,6 +13,10 @@ const bodyParser = require('body-parser')
 const path = require('path')
 const routes = require('./routes')
 const app = express()
+const http = require('http')
+const server = http.createServer(app)
+const { Server } = require('socket.io')
+const io = new Server(server)
 const port = process.env.PORT || 3000
 
 const SESSION_SECRET = 'secret'
@@ -36,7 +40,27 @@ app.use((req, res, next) => {
   next()
 })
 
+app.get('/', (req, res) => {
+  res.render('user_chatroom')
+})
+
 app.use(routes)
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+server.listen(3000, () => {
+  console.log('listening on *:3000')
+})
+
+io.on('connection', socket => {
+  console.log('a user connected')
+
+  socket.on('disconnect', () => {
+    console.log('user disconnected')
+  })
+  // 監聽 chat message emit 的任何訊息
+  socket.on('chat message', msg => {
+    console.log('message: ' + msg)
+    // 將 訊息丟回到 socket chat message
+    io.emit('chat message', msg)
+  })
+})
 
 module.exports = app

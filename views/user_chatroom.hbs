@@ -1,0 +1,53 @@
+<section id="Huei-region" class="">
+  <div class="flex-home-page">
+    <section class="left-region-sidebar">
+      {{> home-tabs route='home'}}
+    </section>
+
+    <section id="ys-FE-users-region" class="chatroom-layout">
+
+
+
+      <div class="followers scroll-container">
+
+        <ul id="messages"></ul>
+        <form id="form" action="">
+          <input id="input" autocomplete="off" /><button>Send</button>
+        </form>
+
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.js"></script>
+        <script>
+          // step 2 建立連線
+          var socket = io()
+
+          // 抓取必要的 DOM
+          var messages = document.getElementById('messages')
+          var form = document.getElementById('form')
+          var input = document.getElementById('input')
+
+          // input 欄位掛上監聽器 做 socket.emit 傳入 server
+          form.addEventListener('submit', function (e) {
+            e.preventDefault()
+            if (input.value) {
+              socket.emit('chat message', input.value)
+              input.value = ''
+            }
+          })
+
+          // socket 監聽從 server 在 chat message 傳來的資料   
+          socket.on('chat message', function (msg) {
+            var item = document.createElement('li')
+            item.textContent = msg
+            messages.appendChild(item)
+            window.scrollTo(0, document.body.scrollHeight)
+          });
+        </script>
+
+      </div>
+    </section>
+
+
+  </div>
+
+</section>
