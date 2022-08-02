@@ -7,6 +7,7 @@ const tweetController = require('../controllers/tweetController')
 const replyController = require('../controllers/replyController')
 const followshipController = require('../controllers/followshipController')
 const userController = require('../controllers/user-controller')
+const messageController = require('../controllers/messageController')
 const { generalErrorHandler } = require('../middleware/error-handler')
 const { authenticated } = require('../middleware/auth')
 const { getRecommendedUsers } = require('../middleware/recommendedUser')
@@ -37,6 +38,8 @@ router.post('/users/:id/setting', authenticated, userController.putSetting)
 
 router.get('/users/:id/followers', authenticated, getRecommendedUsers, userController.followers)
 router.get('/users/:id/followings', authenticated, getRecommendedUsers, userController.followings)
+
+router.get('/message', authenticated, messageController.getMessage)
 
 router.use('/', generalErrorHandler)
 router.use('/', authenticated, tweetController.getTweets)
