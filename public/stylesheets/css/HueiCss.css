@@ -549,13 +549,15 @@ section#Huei-region .flex-message-page .public-message .public-message-middle .u
   margin-top: 10px;
   padding: 7px 14px;
   height: 29px;
-  width: 169px;
   background: #E5E5E5;
   border-radius: 50px;
+  display: inline-block;
+  width: auto;
 }
 section#Huei-region .flex-message-page .public-message .public-message-middle .ul-public-message .li-status-message .span-status-message {
+  position: relative;
+  bottom: 5px;
   height: 15px;
-  width: 149px;
   font-weight: 500;
   font-size: 15px;
   line-height: 15px;
