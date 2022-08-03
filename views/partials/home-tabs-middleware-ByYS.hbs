@@ -19,6 +19,14 @@
               </div>
             </a>
           </li>
+          <li class="nav-item flex-nowrap-element mt-1">
+            <a class="nav-link text-dark" href="/message">
+              <div class="d-flex">
+                <img src="/images/message.png" alt="icon" class="{{#ifCond route 'message'}}img-mask{{/ifCond}}">
+                <span class="h5 h-orange {{#ifCond route 'message'}}color-mask{{/ifCond}}">&nbsp;&nbsp;&nbsp;公開聊天室</span>
+              </div>
+            </a>
+          </li>
           <li class="nav-item py-2">
             <a class="nav-link text-dark" href="/users/{{loginUser.id}}/tweets">
               <div class="d-flex flex-nowrap">

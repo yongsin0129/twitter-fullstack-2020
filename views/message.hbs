@@ -1,0 +1,190 @@
+<section id="Huei-region" class="">
+  <div class="flex-message-page">
+    <!--左側導覽列-->
+    <section class="left-region-sidebar">
+      {{> home-tabs route='message' users=users user=user}}
+    </section>
+
+    <div class="d-flex">
+      <!--使用者清單 開始-->
+      <div class="public-message-user">
+        <ul class="ul-user-online">
+          <li class="li-user-online">
+            <span class="user-title-span">上線使用者&nbsp;&nbsp;({{userCount}})</span>
+          </li>
+          <!--每一個使用者 開始-->
+          <li class="li-user-online">
+            <img src="{{#if user.avatar}}{{user.avatar}}{{else}}/images/icon/logo-gray.png{{/if}}"
+              class="tweet-user-avatar" style="width:50px;height:50px;display:inline-block;" alt="Picture">
+            <a class="li-name" href="/users/{{this.User.id}}/tweets">{{user.name}}</a>
+            <a class="li-account" href="/users/{{this.User.id}}/tweets">@{{user.account}}</a>
+          </li>
+          <!--每一個使用者 結束-->
+        </ul>
+      </div>
+      <!--使用者清單 結束-->
+
+      <!--聊天室 開始-->
+      <div class="public-message">
+        <div class="public-message-title">
+          <span class="title-span">公開聊天室</span>
+        </div>
+        <div class="public-message-middle">
+          <ul class="ul-public-message">
+            <!--左側聊天訊息 開始-->
+            <li class="li-left-message">
+              <div class="message-img">
+                <img src="{{#if user.avatar}}{{user.avatar}}{{else}}/images/icon/logo-gray.png{{/if}}" class=""
+                  style="width:40px;height:40px;border-radius: 50px;" alt="Picture">
+              </div>
+              <span class="message-time">下午4:21</span>
+              <div class="message-span">
+                <span>
+                  謝謝妳的用心分享❤️
+                  突然覺得我的Mac跟著我真的浪費Mac生⋯
+                </span>
+              </div>
+            </li>
+            <!--左側聊天訊息 結束-->
+            <!--右側聊天訊息 開始-->
+            <li class="li-right-message">
+              <span class="message-time">下午4:21</span>
+              <div class="message-span">
+                <span class="span-message">
+                  提醒大家千萬不要把筆電當桌電用
+                  一直插著電都不拔起來
+                  電池很快就壞ㄌＱＱ
+                  還是要讓他有放電哦
+                </span>
+              </div>
+            </li>
+            <!--右側聊天訊息 結束-->
+            <!--左側聊天訊息 開始-->
+            <li class="li-left-message">
+              <div class="message-img">
+                <img src="{{#if user.avatar}}{{user.avatar}}{{else}}/images/icon/logo-gray.png{{/if}}" class=""
+                  style="width:40px;height:40px;border-radius: 50px;" alt="Picture">
+              </div>
+              <span class="message-time">下午4:21</span>
+              <div class="message-span">
+                <span>
+                  謝謝妳的用心分享❤️
+                  突然覺得我的Mac跟著我真的浪費Mac生⋯
+                </span>
+              </div>
+            </li>
+            <!--左側聊天訊息 結束-->
+            <!--右側聊天訊息 開始-->
+            <li class="li-right-message">
+              <span class="message-time">下午4:21</span>
+              <div class="message-span">
+                <span class="span-message">
+                  提醒大家千萬不要把筆電當桌電用
+                  一直插著電都不拔起來
+                  電池很快就壞ㄌＱＱ
+                  還是要讓他有放電哦
+                </span>
+              </div>
+            </li>
+            <!--右側聊天訊息 結束-->
+
+            <!--左側聊天訊息 開始-->
+            <li class="li-left-message">
+              <div class="message-img">
+                <img src="{{#if user.avatar}}{{user.avatar}}{{else}}/images/icon/logo-gray.png{{/if}}" class=""
+                  style="width:40px;height:40px;border-radius: 50px;" alt="Picture">
+              </div>
+              <span class="message-time">下午4:21</span>
+              <div class="message-span">
+                <span>
+                  生⋯
+                </span>
+              </div>
+            </li>
+            <!--左側聊天訊息 結束-->
+            <!--右側聊天訊息 開始-->
+            <li class="li-right-message">
+              <span class="message-time">下午4:21</span>
+              <div class="message-span">
+                <span class="span-message">
+                  提醒大家千萬不要把筆電當桌電用
+                  一直插著電都不拔起來
+                  電池很快就壞ㄌＱＱ
+                  還是要讓他有放電哦
+                  提醒大家千萬不要把筆電當桌電用
+                  一直插著電都不拔起來
+                  電池很快就壞ㄌＱＱ
+                  還是要讓他有放電哦
+                </span>
+              </div>
+            </li>
+            <!--右側聊天訊息 結束-->
+
+            <!--左側聊天訊息 開始-->
+            <li class="li-left-message">
+              <div class="message-img">
+                <img src="{{#if user.avatar}}{{user.avatar}}{{else}}/images/icon/logo-gray.png{{/if}}" class=""
+                  style="width:40px;height:40px;border-radius: 50px;" alt="Picture">
+              </div>
+              <span class="message-time">下午4:21</span>
+              <div class="message-span">
+                <span>
+                  謝謝妳的用心分享❤️
+                  突然覺得我的Mac跟著我真的浪費Mac生⋯
+                </span>
+              </div>
+            </li>
+            <!--左側聊天訊息 結束-->
+            <!--右側聊天訊息 開始-->
+            <li class="li-right-message">
+              <span class="message-time">下午4:21</span>
+              <div class="message-span">
+                <span class="span-message">
+                  哦
+                </span>
+              </div>
+            </li>
+            <!--右側聊天訊息 結束-->
+
+            <!--使用者狀態 開始-->
+            <li class="li-status-message">
+              <span class="span-status-message">
+                Ralph Edwards 離線
+              </span>
+            </li>
+            <!--使用者狀態 結束-->
+
+            <!--使用者狀態 開始-->
+            <li class="li-status-message">
+              <span class="span-status-message">
+                君 離線
+              </span>
+            </li>
+            <!--使用者狀態 結束-->
+
+            <!--使用者狀態 開始-->
+            <li class="li-status-message">
+              <span class="span-status-message">
+                永Ｃ 離線
+              </span>
+            </li>
+            <!--使用者狀態 結束-->
+
+          </ul>
+        </div>
+        <!--聊天輸入框 開始-->
+        <form id="public-message-form" action="">
+          <div class="public-message-footer">
+            <input type="text" placeholder="請輸入訊息 ..." maxlength="160" class="public-message-input">
+            <button class="send-btn" type="button">
+              <img src="/images/submit.png" alt="">
+            </button>
+          </div>
+        </form>
+        <!--聊天輸入框 結束-->
+      </div>
+      <!--聊天室 結束-->
+    </div>
+
+  </div>
+</section>
