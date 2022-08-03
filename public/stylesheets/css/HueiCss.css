@@ -380,14 +380,14 @@ section#Huei-region .flex-message-page {
 }
 section#Huei-region .flex-message-page .public-message-user .ul-user-online {
   height: 820px;
-  width: 380px;
+  width: 415px;
   margin: 0;
   padding: 0;
   border-left: 1px solid #E6ECF0;
   border-right: 1px solid #E6ECF0;
 }
 section#Huei-region .flex-message-page .public-message-user .li-user-online {
-  width: 379px;
+  width: 414px;
   height: 81px;
   border-bottom: 1px solid #E6ECF0;
 }
