@@ -17,19 +17,17 @@
 
 
         <script>
-          // step 2 建立連線
+          // step 1 ---- 建立連線
           const socket = io()
-          socket.emit('login', {
-            userName: '{{loginUser.name}}',
-            avatar: '{{loginUser.avatar}}'
-          })
+          socket.emit('login', { userId: '{{loginUser.id}}' })
 
           // 抓取必要的 DOM
           const messages = document.getElementById('messages')
           const form = document.getElementById('form')
           const input = document.getElementById('input')
 
-          // input 欄位掛上監聽器 做 socket.emit 傳入 server
+
+          // step2 ---- 掛上監聽器  input 欄位 做 socket.emit 傳入 server
           form.addEventListener('submit', function (e) {
             e.preventDefault()
             if (input.value) {
@@ -39,7 +37,8 @@
             }
           })
 
-          // socket 監聽從 server 在 chat message 傳來的資料   
+
+          // step3 ---- socket 監聽從 server 在 chat message 傳來的資料   
           socket.on('chat message', function (receivedObj) {
             const item = document.createElement('li')
             item.textContent = receivedObj.message
@@ -47,6 +46,8 @@
             window.scrollTo(0, document.body.scrollHeight)
           })
 
+
+          // ---- ---- ---- 全體廣播頻道 ---- ---- ----
           socket.on('broadcast', (data) => {
             const item = document.createElement('li')
             item.textContent = data.description
