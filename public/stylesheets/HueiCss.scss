@@ -63,7 +63,7 @@ section#Huei-region {
     }
 
     .img-mask {
-      filter: #FF6600;
+      filter: invert(38%) sepia(41%) saturate(6991%) brightness(109%) contrast(102%);
     }
   }
 
