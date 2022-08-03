@@ -1,0 +1,181 @@
+<section id="Huei-region" class="">
+  <div class="flex-message-page">
+    <!--左側導覽列-->
+    <section class="left-region-sidebar">
+      {{> home-tabs route='message' users=users user=user}}
+    </section>
+
+    <div class="d-flex">
+      <!--使用者清單 開始-->
+      <div class="public-message-user">
+        <ul class="ul-user-online" id="allUserList">
+          <!--每一個使用者 開始-->
+
+          <!--每一個使用者 結束-->
+        </ul>
+      </div>
+      <!--使用者清單 結束-->
+
+      <!--聊天室 開始-->
+      <div class="public-message">
+        <div class="public-message-title">
+          <span class="title-span">公開聊天室</span>
+        </div>
+        <div class="public-message-middle">
+          <ul class="ul-public-message" id="public-message" style="height:100%;display: flex;
+flex-direction: column;">
+
+            <li class="li-left-message" style="flex: 1;"></li>
+            {{!-- 聊天室內容<li></li>>，一開始為空 --}}
+
+          </ul>
+        </div>
+        <!--聊天輸入框 開始-->
+        <form id="public-message-form" action="">
+          <div class="public-message-footer">
+            <input id="messageInput" type="text" placeholder="請輸入訊息 ..." maxlength="160" class="public-message-input">
+            <button class="send-btn" type="button">
+              <img src="/images/submit.png" alt="">
+            </button>
+          </div>
+        </form>
+        <!--聊天輸入框 結束-->
+      </div>
+      <!--聊天室 結束-->
+    </div>
+
+    <!--socketIo script 開始-->
+    <script>
+      // step 1 ---- 建立連線
+      const socket = io()
+      socket.emit('login', { userId: '{{loginUser.id}}' })
+
+      // 抓取必要的 DOM
+      const allUserListDOM = document.getElementById('allUserList')
+      const scrollbarRegion = document.querySelector('.public-message-middle')
+      const messages = document.getElementById('public-message')
+      const form = document.getElementById('public-message-form')
+      const input = document.getElementById('messageInput')
+      const loginUserId = Number('{{loginUser.id}}')
+
+
+      // step2 ---- 掛上監聽器  input 欄位 做 socket.emit 傳入 server
+      form.addEventListener('submit', function (e) {
+        e.preventDefault()
+        if (input.value) {
+          // socket.emit 可以針對頻道傳送物件
+          socket.emit('chat message', input.value)
+          input.value = ''
+        }
+      })
+
+
+      // step3 ---- socket 監聽從 server 在 chat message 傳來的資料   
+      socket.on('chat message', function (receivedObj) {
+        if (receivedObj.id !== loginUserId) {
+          // 他人的訊息 --- 出現在左邊
+          const leftHandMessage = document.createElement('li')
+          leftHandMessage.className = 'li-left-message'
+          leftHandMessage.innerHTML =
+            `
+            <div class="message-img">
+              <img src="${receivedObj.avatar}" class=""
+                style="width:40px;height:40px;border-radius: 50px;" alt="Picture">
+            </div>
+            <span class="message-time">${timeFormat(new Date())}</span>
+            <div class="message-span">
+              <span>
+                ${receivedObj.message}
+              </span>
+            </div>
+            `
+          messages.appendChild(leftHandMessage)
+        } else {
+          // 自已的訊息 --- 出現在右邊
+          const rightHandMessage = document.createElement('li')
+          rightHandMessage.className = 'li-right-message'
+          rightHandMessage.innerHTML =
+            `
+            <span class="message-time">${timeFormat(new Date())}</span>
+            <div class="message-span">
+              <span class="span-message">
+                ${receivedObj.message}
+              </span>
+            </div>
+            `
+          messages.appendChild(rightHandMessage)
+        }
+        scrollbarRegion.scrollTo(0, scrollbarRegion.scrollHeight)
+      })
+
+
+      // ---- ---- ---- 全體廣播頻道 ---- ---- ----
+      socket.on('broadcast', (usersData) => {
+
+        const usersArray = Object.values(usersData)
+
+        //  userList 顯示邏輯 --- 
+        let rawHTML = `
+          <li class="li-user-online">
+            <span class="user-title-span">上線使用者&nbsp;&nbsp;(${usersArray.length})</span>
+          </li>
+        `
+        usersArray.forEach((user) => {
+          rawHTML +=
+            `
+          <li class='li-user-online'>
+            <img src="${user.avatar}"
+              class="tweet-user-avatar" style="width:50px;height:50px;display:inline-block;" alt="Picture">
+            <a class="li-name" href="/users/${user.id}/tweets">${user.name}</a>
+            <a class="li-account" href="/users/${user.id}/tweets">@${user.account}</a>
+          </li>
+          `
+          allUserListDOM.innerHTML = rawHTML
+        })
+
+      })
+
+      // ---- ---- ---- 使用者登入事件 ---- ---- ----
+      socket.on('loginEvent', (userData) => {
+
+        //  userLogin 顯示邏輯 --- 
+        const userStatus = document.createElement('li')
+        userStatus.className = 'li-status-message'
+        userStatus.innerHTML =
+          `
+          <span class="span-status-message">
+            ${userData.name} 上線了
+          </span>
+          `
+        messages.appendChild(userStatus)
+        scrollbarRegion.scrollTo(0, document.body.scrollHeight)
+      })
+
+      // ---- ---- ---- 使用者登出事件 ---- ---- ----
+      socket.on('logoutEvent', (userData) => {
+        //  userLogin 顯示邏輯 --- 
+        const userStatus = document.createElement('li')
+        userStatus.className = 'li-status-message'
+        userStatus.innerHTML =
+          `
+          <span class="span-status-message">
+            ${userData.name} 離線了
+          </span>
+          `
+        messages.appendChild(userStatus)
+        scrollbarRegion.scrollTo(0, document.body.scrollHeight)
+      })
+
+      function timeFormat (timeObj) {
+        const hour = timeObj.getHours() //0-24
+        console.log("timeFormat ~ hour", hour)
+        const minute = timeObj.getMinutes() //0-59
+        console.log("timeFormat ~ minute", minute)
+        if (hour >= 12) return `下午${hour - 12}:${minute}`
+        else return `上午${hour}:${minute}`
+      }
+
+    </script>
+    <!--socketIo script 姞束-->
+  </div>
+</section>

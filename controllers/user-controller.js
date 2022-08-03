@@ -91,13 +91,12 @@ const userController = {
         if (user) {
           user.isFollowed = user.Followings.some(u => u.id === targetUser.id)
         }
-        const tweetsData = tweets
-          .map(t => ({
-            ...t.toJSON(),
-            likedCount: t.Likes.length,
-            repliedCount: t.Replies.length,
-            isLiked: t.Likes.some(like => like.UserId === user.id)
-          }))
+        const tweetsData = tweets.map(t => ({
+          ...t.toJSON(),
+          likedCount: t.Likes.length,
+          repliedCount: t.Replies.length,
+          isLiked: t.Likes.some(like => like.UserId === user.id)
+        }))
         res.locals.tweetsLength = tweets.length
         res.render('profile', { targetUser: targetUser.toJSON(), tweets: tweetsData, user, tweet: true })
       })

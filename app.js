@@ -9,10 +9,10 @@ const handlebarsHelpers = require('./helpers/handlebars-helpers')
 const session = require('express-session')
 const passport = require('passport')
 const flash = require('connect-flash')
-const bodyParser = require('body-parser')
 const path = require('path')
 const routes = require('./routes')
 const app = express()
+
 const port = process.env.PORT || 3000
 
 const SESSION_SECRET = 'secret'
@@ -37,6 +37,7 @@ app.use((req, res, next) => {
 })
 
 app.use(routes)
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
 module.exports = app
+
+require('./socketIo')
