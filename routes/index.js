@@ -39,7 +39,7 @@ router.post('/users/:id/setting', authenticated, userController.putSetting)
 router.get('/users/:id/followers', authenticated, getRecommendedUsers, userController.followers)
 router.get('/users/:id/followings', authenticated, getRecommendedUsers, userController.followings)
 
-router.get('/message', authenticated, messageController.getMessage)
+router.get('/message', authenticated, messageController.getAllChatroom)
 
 router.use('/', generalErrorHandler)
 router.use('/', authenticated, tweetController.getTweets)

@@ -206,10 +206,6 @@ const userController = {
     } catch (err) {
       next(err)
     }
-  },
-
-  getChatRoom: (req, res) => {
-    res.render('user_chatroom')
   }
 }
 

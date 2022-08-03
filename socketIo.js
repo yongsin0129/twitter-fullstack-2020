@@ -6,23 +6,18 @@ const io = new Server(server)
 const { User } = require('./models')
 
 // 記錄之前的訊息
-const historyLogs = [
-  { name: 'Majer', message: 'Welcome Majer!' },
-  { name: 'vincent', message: 'Welcome vincent' },
-  { name: 'carl', message: 'Welcome carl' },
-  { name: 'andy', message: 'Welcome andy' }
-]
+// const historyLogs = [{}]
 
 const chattingUsers = {}
 
 // --------------    io --------------    建立連線
 io.on('connection', socket => {
   // 建立連線的用戶都可以看到以前的訊息
-  historyLogs.forEach(log => {
-    socket.emit('chat message', log)
-  })
+  // historyLogs.forEach(log => {
+  //   socket.emit('chat message', log)
+  // })
 
-  // --------------   有使用者上線
+  // -------------- Login 事件
   socket.on('login', async loginData => {
     // 透過資料庫找尋使用者資料
     const loginUser = await User.findByPk(loginData.userId, { raw: true })
@@ -30,15 +25,19 @@ io.on('connection', socket => {
     chattingUsers[socket.id] = loginUser
     // 在前後端都留下訊息
     console.log('a user ' + chattingUsers[socket.id].name + ' connected')
-    io.sockets.emit('broadcast', { description: chattingUsers[socket.id].name + ' 上線了 !!' })
+
+    io.sockets.emit('loginEvent', chattingUsers[socket.id])
+    io.sockets.emit('broadcast', chattingUsers)
   })
 
-  // --------------   有使用者離線
+  // -------------- Logout 事件
   socket.on('disconnect', () => {
+    // 在前後端都留下訊息
     console.log('user ' + chattingUsers[socket.id]?.name + ' disconnected')
-    io.sockets.emit('broadcast', { description: chattingUsers[socket.id]?.name + ' 離線了 !!' })
+    io.sockets.emit('logoutEvent', chattingUsers[socket.id])
     // remove saved socket from users object
     delete chattingUsers[socket.id]
+    io.sockets.emit('broadcast', chattingUsers)
   })
 
   // --------------   監聽 --------------   chat message emit 的任何訊息
