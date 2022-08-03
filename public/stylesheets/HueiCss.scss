@@ -608,6 +608,7 @@ section#Huei-region {
           }
 
           .li-right-message {
+            position: relative;
             display: flex;
             margin-left: auto;
             padding-left: 0;
@@ -646,8 +647,8 @@ section#Huei-region {
               color: #657786;
               margin-top: 2px;
               margin-bottom: 2px;
-              position: relative;
-              left: 343px;
+              position: absolute;
+              right: 0px;
             }
           }
 
