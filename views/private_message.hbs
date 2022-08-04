@@ -49,6 +49,9 @@ flex-direction: column;">
       //  ---- 建立連線
       const socket = io()
 
+      // 基本資訊
+      const loginUserId = Number('{{loginUser.id}}')
+      let targetUserId
       socket.auth = { userId: '{{loginUser.id}}' }
 
       socket.emit('login', { userId: '{{loginUser.id}}' })
@@ -62,16 +65,14 @@ flex-direction: column;">
       const form = document.getElementById('public-message-form')
       const input = document.getElementById('messageInput')
 
-      // 需要資訊
-      const loginUserId = Number('{{loginUser.id}}')
-      let targetUserId
 
-      //  ---- 掛上監聽器  input 欄位 做 socket.emit 傳入 server
+
+      //  ---- 監聽  input 欄位 做 socket.emit 傳入 server
       form.addEventListener('submit', function (e) {
         e.preventDefault()
 
         if (input.value) {
-          socket.emit('private message', { receivedMsg: input.value, receiver: targetUserId })
+          socket.emit('private message', { receivedMsg: input.value, targetUserId })
           input.value = ''
         }
       })
@@ -116,7 +117,7 @@ flex-direction: column;">
       })
 
 
-      // ---- ---- ---- 全體廣播頻道 ---- ---- ----
+      // ---- ---- ---- 更新私息清單 ---- ---- ----
       socket.on('checkPM', (usersData) => {
         console.log("socket.on ~ usersData", usersData)
 
@@ -127,11 +128,11 @@ flex-direction: column;">
           <li class="li-user-online">
             <span class="user-title-span">訊息</span>
           </li>
-          <li class='li-user-online userCard' userName="user1" userId="2">
-            <img src="https://randomuser.me/api/portraits/men/2.jpg"
+          <li class='li-user-online userCard' userName="user5" userId="6">
+            <img src="https://randomuser.me/api/portraits/men/6.jpg"
               class="tweet-user-avatar" style="width:50px;height:50px;display:inline-block;border-radius: 50%;" alt="Picture">
-            <span class="li-name" href="/users/2/tweets">user1</span>
-            <span class="li-account" href="/users/2/tweets">@user1</span>
+            <span class="li-name" >user5</span>
+            <span class="li-account" >@user5</span>
           </li>
           <li class='li-user-online userCard' userName="user2" userId="3">
             <img src="https://randomuser.me/api/portraits/men/3.jpg"
@@ -153,14 +154,12 @@ flex-direction: column;">
         })
         allUserListDOM.innerHTML = rawHTML
 
+        // 點擊使用者，room 的連線
         allUserListDOM.addEventListener('click', (event) => {
           const userCardDOM = event.target.closest('.li-user-online')
-          const targetUserName = userCardDOM.attributes.userName.value
           targetUserId = Number(userCardDOM.attributes.userId.value)
-          const room = targetUserId
-          clearPrivateMessageCanvas()
-          socketInit(socket, room)
-          PMessageTitle.children[0].innerText = targetUserName
+          clearPrivateMessageCanvas(userCardDOM)
+          socketInitAndCreateRoom(socket, loginUserId, targetUserId)
         })
 
       })
@@ -172,14 +171,16 @@ flex-direction: column;">
         else return `上午${hour}:${minute}`
       }
 
-      function clearPrivateMessageCanvas () {
+      function clearPrivateMessageCanvas (userCardDOM) {
+        const targetUserName = userCardDOM.attributes.userName.value
+        PMessageTitle.children[0].innerText = targetUserName
         messagesDOM.innerHTML = `<li class="li-left-message" style="flex: 1;"></li>`
       }
 
-      function socketInit (socket, room) {
+      function socketInitAndCreateRoom (socket, loginUserId, targetUserId) {
         socket.disconnect()
         socket.connect()
-        socket.emit('join room', room)
+        socket.emit('join room', targetUserId)
       }
 
     </script>
