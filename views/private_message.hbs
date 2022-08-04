@@ -1,8 +1,8 @@
-<section id="Huei-region" class="">
+<section id="ys-FE-users-private-message">
   <div class="flex-message-page">
     <!--左側導覽列-->
     <section class="left-region-sidebar">
-      {{> home-tabs-middleware-ByYS route='message'}}
+      {{> home-tabs-middleware-ByYS route='private-message'}}
     </section>
 
     <div class="d-flex">
@@ -19,7 +19,7 @@
       <!--聊天室 開始-->
       <div class="public-message">
         <div class="public-message-title">
-          <span class="title-span">公開聊天室</span>
+          <span class="title-span">私人訊息</span>
         </div>
         <div class="public-message-middle">
           <ul class="ul-public-message" id="public-message" style="height:100%;display: flex;
@@ -46,35 +46,39 @@ flex-direction: column;">
 
     <!--socketIo script 開始-->
     <script>
-      // step 1 ---- 建立連線
+      //  ---- 建立連線
       const socket = io()
 
       socket.auth = { userId: '{{loginUser.id}}' }
 
       socket.emit('login', { userId: '{{loginUser.id}}' })
+      socket.emit('checkPM', { userId: '{{loginUser.id}}' })
 
       // 抓取必要的 DOM
       const allUserListDOM = document.getElementById('allUserList')
       const scrollbarRegion = document.querySelector('.public-message-middle')
-      const messages = document.getElementById('public-message')
+      const PMessageTitle = document.querySelector('.public-message-title')
+      const messagesDOM = document.getElementById('public-message')
       const form = document.getElementById('public-message-form')
       const input = document.getElementById('messageInput')
+
+      // 需要資訊
       const loginUserId = Number('{{loginUser.id}}')
+      let targetUserId
 
-
-      // step2 ---- 掛上監聽器  input 欄位 做 socket.emit 傳入 server
+      //  ---- 掛上監聽器  input 欄位 做 socket.emit 傳入 server
       form.addEventListener('submit', function (e) {
         e.preventDefault()
+
         if (input.value) {
-          // socket.emit 可以針對頻道傳送物件
-          socket.emit('chat message', input.value)
+          socket.emit('private message', { receivedMsg: input.value, receiver: targetUserId })
           input.value = ''
         }
       })
 
 
-      // step3 ---- socket 監聽從 server 在 chat message 傳來的資料   
-      socket.on('chat message', function (receivedObj) {
+      //  ---- socket 監聽從 server 在 chat message 傳來的資料   
+      socket.on('private message', function (receivedObj) {
         if (receivedObj.id !== loginUserId) {
           // 他人的訊息 --- 出現在左邊
           const leftHandMessage = document.createElement('li')
@@ -92,7 +96,7 @@ flex-direction: column;">
               </span>
             </div>
             `
-          messages.appendChild(leftHandMessage)
+          messagesDOM.appendChild(leftHandMessage)
         } else {
           // 自已的訊息 --- 出現在右邊
           const rightHandMessage = document.createElement('li')
@@ -106,76 +110,76 @@ flex-direction: column;">
               </span>
             </div>
             `
-          messages.appendChild(rightHandMessage)
+          messagesDOM.appendChild(rightHandMessage)
         }
         scrollbarRegion.scrollTo(0, scrollbarRegion.scrollHeight)
       })
 
 
       // ---- ---- ---- 全體廣播頻道 ---- ---- ----
-      socket.on('broadcast', (usersData) => {
+      socket.on('checkPM', (usersData) => {
+        console.log("socket.on ~ usersData", usersData)
 
         const usersArray = Object.values(usersData)
 
         //  userList 顯示邏輯 --- 
         let rawHTML = `
           <li class="li-user-online">
-            <span class="user-title-span">上線使用者&nbsp;&nbsp;(${usersArray.length})</span>
+            <span class="user-title-span">訊息</span>
+          </li>
+          <li class='li-user-online userCard' userName="user1" userId="2">
+            <img src="https://randomuser.me/api/portraits/men/2.jpg"
+              class="tweet-user-avatar" style="width:50px;height:50px;display:inline-block;border-radius: 50%;" alt="Picture">
+            <span class="li-name" href="/users/2/tweets">user1</span>
+            <span class="li-account" href="/users/2/tweets">@user1</span>
+          </li>
+          <li class='li-user-online userCard' userName="user2" userId="3">
+            <img src="https://randomuser.me/api/portraits/men/3.jpg"
+              class="tweet-user-avatar" style="width:50px;height:50px;display:inline-block;border-radius: 50%;" alt="Picture">
+            <span class="li-name" href="/users/3/tweets">user2</span>
+            <span class="li-account" href="/users/3/tweets">@user2</span>
           </li>
         `
         usersArray.forEach((user) => {
           rawHTML +=
             `
-          <li class='li-user-online'>
+          <li class='li-user-online userCard' userName="${user.name}" userId="${user.id}">
             <img src="${user.avatar}"
-              class="tweet-user-avatar" style="width:50px;height:50px;display:inline-block;" alt="Picture">
-            <a class="li-name" href="/users/${user.id}/tweets">${user.name}</a>
-            <a class="li-account" href="/users/${user.id}/tweets">@${user.account}</a>
+              class="tweet-user-avatar" style="width:50px;height:50px;display:inline-block;border-radius: 50%;" alt="Picture">
+            <span class="li-name" href="/users/${user.id}/tweets">${user.name}</span>
+            <span class="li-account" href="/users/${user.id}/tweets">@${user.account}</span>
           </li>
           `
-          allUserListDOM.innerHTML = rawHTML
+        })
+        allUserListDOM.innerHTML = rawHTML
+
+        allUserListDOM.addEventListener('click', (event) => {
+          const userCardDOM = event.target.closest('.li-user-online')
+          const targetUserName = userCardDOM.attributes.userName.value
+          targetUserId = Number(userCardDOM.attributes.userId.value)
+          const room = targetUserId
+          clearPrivateMessageCanvas()
+          socketInit(socket, room)
+          PMessageTitle.children[0].innerText = targetUserName
         })
 
       })
 
-      // ---- ---- ---- 使用者登入事件 ---- ---- ----
-      socket.on('loginEvent', (userData) => {
-
-        //  userLogin 顯示邏輯 --- 
-        const userStatus = document.createElement('li')
-        userStatus.className = 'li-status-message'
-        userStatus.innerHTML =
-          `
-          <span class="span-status-message">
-            ${userData.name} 上線了
-          </span>
-          `
-        messages.appendChild(userStatus)
-        scrollbarRegion.scrollTo(0, document.body.scrollHeight)
-      })
-
-      // ---- ---- ---- 使用者登出事件 ---- ---- ----
-      socket.on('logoutEvent', (userData) => {
-        //  userLogin 顯示邏輯 --- 
-        const userStatus = document.createElement('li')
-        userStatus.className = 'li-status-message'
-        userStatus.innerHTML =
-          `
-          <span class="span-status-message">
-            ${userData.name} 離線了
-          </span>
-          `
-        messages.appendChild(userStatus)
-        scrollbarRegion.scrollTo(0, document.body.scrollHeight)
-      })
-
       function timeFormat (timeObj) {
         const hour = timeObj.getHours() //0-24
-        console.log("timeFormat ~ hour", hour)
         const minute = timeObj.getMinutes() //0-59
-        console.log("timeFormat ~ minute", minute)
         if (hour >= 12) return `下午${hour - 12}:${minute}`
         else return `上午${hour}:${minute}`
+      }
+
+      function clearPrivateMessageCanvas () {
+        messagesDOM.innerHTML = `<li class="li-left-message" style="flex: 1;"></li>`
+      }
+
+      function socketInit (socket, room) {
+        socket.disconnect()
+        socket.connect()
+        socket.emit('join room', room)
       }
 
     </script>

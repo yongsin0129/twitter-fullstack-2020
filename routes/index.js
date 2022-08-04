@@ -40,6 +40,7 @@ router.get('/users/:id/followers', authenticated, getRecommendedUsers, userContr
 router.get('/users/:id/followings', authenticated, getRecommendedUsers, userController.followings)
 
 router.get('/message', authenticated, messageController.getAllChatroom)
+router.get('/private-message', authenticated, messageController.getPrivateMessage)
 
 router.use('/', generalErrorHandler)
 router.use('/', authenticated, tweetController.getTweets)
