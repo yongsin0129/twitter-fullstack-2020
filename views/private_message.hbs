@@ -1,0 +1,202 @@
+<section id="ys-FE-users-private-message">
+  <div class="flex-message-page">
+    <!--左側導覽列-->
+    <section class="left-region-sidebar">
+      {{> home-tabs-middleware-ByYS route='private-message'}}
+    </section>
+
+    <div class="d-flex">
+      <!--使用者清單 開始-->
+      <div class="public-message-user">
+        <ul class="ul-user-online" id="allUserList">
+          <!--每一個使用者 開始-->
+
+
+        </ul>
+      </div>
+
+
+      <!--聊天室 開始-->
+      <div class="public-message">
+        <div class="public-message-title">
+          <span class="title-span">私人訊息</span>
+        </div>
+        <div class="public-message-middle">
+          <ul class="ul-public-message" id="public-message">
+            <li class="li-left-message" style="flex: 1;"></li>
+            {{!-- 聊天室內容<li></li>>，一開始為空 --}}
+          </ul>
+        </div>
+        <!--聊天輸入框 開始-->
+        <form id="public-message-form" action="">
+          <div class="public-message-footer">
+            <input id="messageInput" type="text" placeholder="請輸入訊息 ..." maxlength="160" class="public-message-input">
+            <button class="send-btn" type="button">
+              <img src="/images/submit.png" alt="">
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!--socketIo script 開始-->
+    <script>
+      //  ---- 建立連線
+      const socket = io()
+
+      // 基本資訊
+      const loginUserId = Number('{{loginUser.id}}')
+      let targetUserId = Number('{{PmTargetUserId}}')
+      socket.auth = { userId: '{{loginUser.id}}' }
+      socket.emit('updatePmList', targetUserId)
+
+      // 抓取必要的 DOM
+      const allUserListDOM = document.getElementById('allUserList')
+      const scrollbarRegion = document.querySelector('.public-message-middle')
+      const PMessageTitle = document.querySelector('.public-message-title')
+      const messagesDOM = document.getElementById('public-message')
+      const form = document.getElementById('public-message-form')
+      const input = document.getElementById('messageInput')
+
+      //  ---- input 欄位 做 socket.emit 傳入 server
+      form.addEventListener('submit', function (e) {
+        e.preventDefault()
+
+        if (input.value) {
+          socket.emit('private message', { receivedMsg: input.value, targetUserId })
+          input.value = ''
+        }
+      })
+
+      //  ---- socket 監聽 server 在 chat message 傳來的資料   
+      socket.on('private message', function (receivedObj) {
+        showMessageOnChatBox(receivedObj)
+      })
+
+      // ---- ---- ---- 更新私息人員名單 ---- ---- ----
+      socket.on('updatePmList', (PmDataArray, targetUserData) => {
+        const AllPmMessages = PmDataArray
+        // 顯示 有人傳訊息給你的人員名單
+        const usersList = PmDataArray
+          .filter((PM) => { return (PM.receiverId === loginUserId || PM.senderId === loginUserId) })
+          .map((PM) => {
+            if (PM.receiverId === loginUserId) { return PM.sender }
+            else { return PM.receiver }
+          })
+        // 將想要 PM 的對象加到人員名單之中
+        if (targetUserData) usersList.push(targetUserData)
+        const deduplicatedUsersList = [...new Set(usersList.map(JSON.stringify))].map(JSON.parse)
+
+
+        //  userList 顯示邏輯 --- 
+        let rawHTML =
+          `
+          <li class="li-user-online">
+            <span class="user-title-span">訊息</span>
+          </li>
+          `
+        deduplicatedUsersList.forEach((user) => {
+          rawHTML +=
+            `
+          <li class='li-user-online userCard' userName="${user.name}" userId="${user.id}">
+            <img src="${user.avatar}"
+              class="tweet-user-avatar" style="width:50px;height:50px;display:inline-block;border-radius: 50%;" alt="Picture">
+            <span class="li-name" href="/users/${user.id}/tweets">${user.name}</span>
+            <span class="li-account" href="/users/${user.id}/tweets">@${user.account}</span>
+          </li>
+          `
+        })
+        allUserListDOM.innerHTML = rawHTML
+
+        // 點擊使用者，room 的連線
+        allUserListDOM.addEventListener('click', (event) => {
+          const targetUserCard = event.target.closest('.li-user-online')
+          targetUserId = Number(targetUserCard.attributes.userId.value)
+          const targetUserName = targetUserCard.attributes.userName.value
+          PMessageTitle.children[0].innerText = targetUserName
+          socketInitAndCreateRoom(socket, loginUserId, targetUserId)
+          socket.emit('updateChatBox', targetUserId)
+        })
+
+        socket.on('updateChatBox', (receivedPmMessages) => {
+          clearPmCanvasAndShow()
+          const msgArray = MappingPmToMessageArray(receivedPmMessages)
+          msgArray.forEach((msgObj) => { showMessageOnChatBox(msgObj) })
+        })
+
+        // 定義正在與之聊天的使用者
+        let TalkingUserNow
+        if (targetUserId) {
+          TalkingUserNow = allUserListDOM.querySelector(`[userId='${targetUserId}']`)
+        } else {
+          TalkingUserNow = allUserListDOM.children[1]
+        }
+        TalkingUserNow.click()
+      })
+
+      function timeFormat (timeObj) {
+        const hour = timeObj.getHours() //0-24
+        const minute = timeObj.getMinutes() //0-59
+        if (hour >= 12) return `下午${hour - 12}:${minute}`
+        else return `上午${hour}:${minute}`
+      }
+
+      function clearPmCanvasAndShow (userCardDOM) {
+        messagesDOM.innerHTML = `<li class="li-left-message" style="flex: 1;"></li>`
+      }
+
+      function socketInitAndCreateRoom (socket, loginUserId, targetUserId) {
+        socket.disconnect()
+        socket.connect()
+        socket.emit('join room', targetUserId)
+      }
+
+      function showMessageOnChatBox (receivedObj) {
+        if (receivedObj.id !== loginUserId) {
+          // 他人的訊息 --- 出現在左邊
+          const leftHandMessage = document.createElement('li')
+          leftHandMessage.className = 'li-left-message'
+          leftHandMessage.innerHTML =
+            `
+            <div class="message-img">
+              <img src="${receivedObj.avatar}" class=""
+                style="width:40px;height:40px;border-radius: 50px;" alt="Picture">
+            </div>
+            <span class="message-time">${timeFormat(new Date())}</span>
+            <div class="message-span">
+              <span>
+                ${receivedObj.message}
+              </span>
+            </div>
+            `
+          messagesDOM.appendChild(leftHandMessage)
+        } else {
+          // 自已的訊息 --- 出現在右邊
+          const rightHandMessage = document.createElement('li')
+          rightHandMessage.className = 'li-right-message'
+          rightHandMessage.innerHTML =
+            `
+            <span class="message-time">${timeFormat(new Date())}</span>
+            <div class="message-span">
+              <span class="span-message">
+                ${receivedObj.message}
+              </span>
+            </div>
+            `
+          messagesDOM.appendChild(rightHandMessage)
+        }
+        scrollbarRegion.scrollTo(0, scrollbarRegion.scrollHeight)
+      }
+
+      function MappingPmToMessageArray (AllPmMessages) {
+        const filteredPM = AllPmMessages.filter((pm) => {
+          const senderId = pm.senderId
+          const receiverId = pm.receiverId
+          return (senderId === targetUserId || senderId === loginUserId) && (receiverId === targetUserId || receiverId === loginUserId)
+        })
+        return filteredPM.map((pm) => { return { ...pm.sender, message: pm.message } })
+      }
+    </script>
+    <!--socketIo script 姞束-->
+  </div>
+</section>
