@@ -2,7 +2,7 @@
   <div class="flex-message-page">
     <!--左側導覽列-->
     <section class="left-region-sidebar">
-      {{> home-tabs route='message' users=users user=user}}
+      {{> home-tabs-middleware-ByYS route='message'}}
     </section>
 
     <div class="d-flex">
@@ -48,6 +48,9 @@ flex-direction: column;">
     <script>
       // step 1 ---- 建立連線
       const socket = io()
+
+      socket.auth = { userId: '{{loginUser.id}}' }
+
       socket.emit('login', { userId: '{{loginUser.id}}' })
 
       // 抓取必要的 DOM

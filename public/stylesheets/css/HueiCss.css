@@ -49,7 +49,7 @@ section#Huei-region a .color-mask {
   color: #FF6600;
 }
 section#Huei-region a .img-mask {
-  filter: #FF6600;
+  filter: invert(48%) sepia(41%) saturate(6991%) hue-rotate(6deg) brightness(109%) contrast(102%);
 }
 section#Huei-region .icon {
   width: 50px;
@@ -549,13 +549,15 @@ section#Huei-region .flex-message-page .public-message .public-message-middle .u
   margin-top: 10px;
   padding: 7px 14px;
   height: 29px;
-  width: 169px;
   background: #E5E5E5;
   border-radius: 50px;
+  display: inline-block;
+  width: auto;
 }
 section#Huei-region .flex-message-page .public-message .public-message-middle .ul-public-message .li-status-message .span-status-message {
+  position: relative;
+  bottom: 5px;
   height: 15px;
-  width: 149px;
   font-weight: 500;
   font-size: 15px;
   line-height: 15px;
