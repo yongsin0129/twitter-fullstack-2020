@@ -600,7 +600,7 @@ section#ys-FE-users-private-message .flex-message-page .public-message-user .li-
   cursor: pointer;
 }
 section#ys-FE-users-private-message .flex-message-page .public-message-user .li-user-online + .userCard:hover {
-  transform: scale(1.05);
+  transform: scale(1.01);
   background-color: #E2E2EA;
 }
 section#ys-FE-users-private-message .flex-message-page .public-message-user .li-user-online .tweet-user-avatar {
@@ -669,7 +669,9 @@ section#ys-FE-users-private-message .flex-message-page .public-message .public-m
   background-color: rgba(0, 0, 0, 0.1);
 }
 section#ys-FE-users-private-message .flex-message-page .public-message .public-message-middle .ul-public-message {
-  height: 655px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   width: 712px;
 }
 section#ys-FE-users-private-message .flex-message-page .public-message .public-message-middle .ul-public-message .li-left-message {

@@ -7,13 +7,13 @@ module.exports = {
     const usersArray = await User.findAll({ where: { role: 'user' }, raw: true })
 
     const PrivateMessagesArray = []
-    // 讓每位使用者對隨機 5位 不重複的 user 發PM , 而且不能是自已
+    // 讓每位使用者對隨機 3位 不重複的 user 發PM , 而且不能是自已
     usersArray.forEach((user, index) => {
       // randonUsers using deep copy
       const randonUsers = [...usersArray]
       // 將自已從 array 中移除
       randonUsers.splice(index, 1)
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 3; i++) {
         const randonNumber = Math.floor(Math.random() * randonUsers.length)
         PrivateMessagesArray.push({
           sender_id: user.id,

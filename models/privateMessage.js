@@ -4,7 +4,8 @@ const { Model } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
   class PrivateMessage extends Model {
     static associate (models) {
-      PrivateMessage.belongsTo(models.User, { foreignKey: 'senderId' })
+      PrivateMessage.belongsTo(models.User, { as: 'sender', foreignKey: 'senderId' })
+      PrivateMessage.belongsTo(models.User, { as: 'receiver', foreignKey: 'receiverId' })
     }
   }
 

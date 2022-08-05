@@ -1,10 +1,10 @@
 <div class="container" id="profile-region" style="height: 1200px;">
-  
+
   <div id="profile-left">
     {{#ifCond targetUser.id user.id}}
-    {{> home-tabs route='tweet' }}
+    {{> home-tabs-middleware-ByYS route='tweet'}}
     {{else}}
-    {{> home-tabs }}
+    {{> home-tabs-middleware-ByYS }}
     {{/ifCond}}
   </div>
 
@@ -36,6 +36,9 @@
           編輯個人資料
         </button>
         {{else}}
+        <a href="/private-message/{{targetUser.id}}"
+          style="width:2.5rem;height:2.5rem;position: absolute;bottom: 1.25rem;right: 7.5rem;"><img
+            src="/images/icon/private message.png" alt=""></a>
         {{#if user.isFollowed}}
         <form action="/followships/{{targetUser.id}}?_method=DELETE" method="POST">
           <button type="submit" class="btn follow-bottom">正在跟隨</span>
@@ -56,7 +59,7 @@
           const saveBtn = document.querySelector('.save-button')
           const modalCloseBtn = document.querySelector('#modal-close-btn')
           const coverCloseBtn = document.querySelector('#cover-close-btn')
-          
+
           const myModal = new bootstrap.Modal(document.getElementById('edit-profile-modal'), {
             keyboard: false
           })
@@ -72,7 +75,7 @@
             document.querySelector('#image').value = ""
             document.querySelector('#coverImage').value = ""
           })
-          
+
           coverCloseBtn.addEventListener('click', () => {
             document.querySelector('#image').value = ""
             document.querySelector('#coverImage').value = ""
@@ -98,7 +101,7 @@
             const formData = new FormData()
             const modalCloseBtn = document.querySelector('#modal-close-btn')
             const coverCloseBtn = document.querySelector('#cover-close-btn')
-            
+
             formData.append("coverImage", coverImagefile.files[0])
             formData.append("image", avatarImagefile.files[0])
             formData.append('name', nameInput.value)
@@ -121,7 +124,8 @@
             <div class="modal-content" style="width: 634px; height: 610px;">
               <div class="modal-header">
                 <div class="header-left">
-                  <button type="button" class="btn-close p-0 m-0" id="modal-close-btn" data-bs-dismiss="modal" aria-label="Close"></button>
+                  <button type="button" class="btn-close p-0 m-0" id="modal-close-btn" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
                   <h5 class="modal-title" style="font-weight: 700; margin-left: 36.5px;">編輯個人資料</h5>
                 </div>
 
@@ -131,7 +135,8 @@
                 {{!-- 表單開始 --}}
                 <form action="/api/users/{{user.id}}" method="POST" class="header-right" enctype="multipart/form-data">
 
-                  <button type="button" class="btn save-button" style="position: absolute;right: 0.5rem;top: -7rem;background-color: #F60;color: #FFFFFF;">
+                  <button type="button" class="btn save-button"
+                    style="position: absolute;right: 0.5rem;top: -7rem;background-color: #F60;color: #FFFFFF;">
                     儲存
                   </button>
 
@@ -186,7 +191,7 @@
                   </div>
                 </form>
                 <script>
-                  function changeFocus(element) {
+                  function changeFocus (element) {
                     const target = document.querySelector('.' + element + '-status')
                     if (target.classList.contains('focus')) {
                       target.classList.remove('focus')
@@ -194,7 +199,7 @@
                     }
                     target.classList.toggle('focus')
                   }
-                  function counts(element) {
+                  function counts (element) {
                     let maxLength = 50
                     if (element === 'introduction') {
                       maxLength = 160
@@ -214,7 +219,7 @@
                       document.querySelector('.element-helper span').innerText = ''
                     }
                   }
-                  function previewAvatarImage() {
+                  function previewAvatarImage () {
                     const avatarImageDOM = document.querySelector('#image')
                     const avatarImagefile = avatarImageDOM.files
                     if (avatarImagefile.length > 0) {
@@ -225,7 +230,7 @@
                       fileReader.readAsDataURL(avatarImagefile[0])
                     }
                   }
-                  function previewCoverImage() {
+                  function previewCoverImage () {
                     const coverImageDOM = document.querySelector('#coverImage')
                     const coverImagefile = coverImageDOM.files
                     if (coverImagefile.length > 0) {
@@ -318,7 +323,7 @@
             <a href="/users/{{this.Tweet.User.id}}/tweets">
               <span class="account">@{{this.Tweet.User.account}}</span>
             </a>
-            
+
           </div>
           <div class="description">
             {{this.comment}}

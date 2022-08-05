@@ -596,7 +596,7 @@ section#ys-FE-users-private-message {
         cursor: pointer;
 
         &+.userCard:hover {
-          transform: scale(1.05);
+          transform: scale(1.01);
           background-color: $dark40;
         }
 
@@ -679,7 +679,9 @@ section#ys-FE-users-private-message {
         }
 
         .ul-public-message {
-          height: 655px;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
           width: 712px;
 
           .li-left-message {
