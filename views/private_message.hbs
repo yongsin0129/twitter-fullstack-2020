@@ -112,12 +112,14 @@
         allUserListDOM.addEventListener('click', (event) => {
           const targetUserCard = event.target.closest('.li-user-online')
           targetUserId = Number(targetUserCard.attributes.userId.value)
-          clearPmCanvasAndShow(targetUserCard)
+          const targetUserName = targetUserCard.attributes.userName.value
+          PMessageTitle.children[0].innerText = targetUserName
           socketInitAndCreateRoom(socket, loginUserId, targetUserId)
           socket.emit('updateChatBox', targetUserId)
         })
 
         socket.on('updateChatBox', (receivedPmMessages) => {
+          clearPmCanvasAndShow()
           const msgArray = MappingPmToMessageArray(receivedPmMessages)
           msgArray.forEach((msgObj) => { showMessageOnChatBox(msgObj) })
         })
@@ -140,8 +142,6 @@
       }
 
       function clearPmCanvasAndShow (userCardDOM) {
-        const targetUserName = userCardDOM.attributes.userName.value
-        PMessageTitle.children[0].innerText = targetUserName
         messagesDOM.innerHTML = `<li class="li-left-message" style="flex: 1;"></li>`
       }
 
