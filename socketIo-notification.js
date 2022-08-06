@@ -26,13 +26,27 @@ module.exports = socket => {
 
       // 通知所有訂閱者，更新自已的通知列表
       io.to(allSubscribers).emit('informSubscribersUpdateNote', allSubscribers)
-      console.log("allSubscribers", allSubscribers)
+      console.log('allSubscribers', allSubscribers)
       return console.log('success_messages', '發送通知更新給有訂閱的使用者')
     }
   })
 
   socket.on('updateNotification', async () => {
     console.log(`前端使用者 id: ${loginUserId} 要求更新列表`)
+
+    setTimeout(() => {
+      NotificationFollow.findAll({
+        where: { subscriberId: loginUserId },
+        include: [
+          { model: Followship, as: 'followEvent', include: User },
+          { model: User, as: 'celebrity' }
+        ],
+        raw: true,
+        nest: true
+      }).then(notification => {
+        io.to(`${loginUserId}`).emit('updateNotification', notification)
+      })
+    }, 1000)
   })
 
   /**
