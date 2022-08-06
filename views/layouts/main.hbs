@@ -67,8 +67,8 @@
       socket.emit('updateNotification')
     })
 
-    socket.on('updateNotification', ({ follow, like, tweet }) => {
-      const array = follow.concat(like, tweet)
+    socket.on('updateNotification', ({ follow, like, tweet, reply }) => {
+      const array = follow.concat(like, tweet, reply)
       array.sort(function (a, b) {
         return new Date(b.createdAt) - new Date(a.createdAt)
       })
@@ -83,6 +83,8 @@
           console.log(`世紀大消息 ! ${celebrity} 喜歡 ${likeUser} 的推文內容 !`)
         } else if (note.tweetEvent) {
           console.log(`世紀大消息 ! ${celebrity} 發了一篇文章 !`)
+        } else if (note.replyEvent) {
+          console.log(`世紀大消息 ! ${celebrity} 回覆了一則 tweet !`)
         }
 
       })

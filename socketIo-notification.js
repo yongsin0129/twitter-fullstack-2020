@@ -6,8 +6,10 @@ const {
   NotificationFollow,
   NotificationLike,
   NotificationTweet,
+  NotificationReply,
   Like,
-  Tweet
+  Tweet,
+  Reply
 } = require('./models')
 
 module.exports = socket => {
@@ -65,9 +67,18 @@ module.exports = socket => {
           ],
           raw: true,
           nest: true
+        }),
+        NotificationReply.findAll({
+          where: { subscriberId: loginUserId, checked: false },
+          include: [
+            { model: Reply, as: 'replyEvent', include: User },
+            { model: User, as: 'celebrity' }
+          ],
+          raw: true,
+          nest: true
         })
-      ]).then(([follow, like, tweet]) => {
-        io.to(`${loginUserId}`).emit('updateNotification', { follow, like, tweet })
+      ]).then(([follow, like, tweet, reply]) => {
+        io.to(`${loginUserId}`).emit('updateNotification', { follow, like, tweet, reply })
       })
     }, 1000)
   })

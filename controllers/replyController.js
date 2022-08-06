@@ -1,5 +1,5 @@
 const helpers = require('../_helpers')
-const { User, Reply, Tweet, Like } = require('../models')
+const { User, Reply, Tweet, Like, NotificationReply } = require('../models')
 const replyController = {
   getReply: async (req, res, next) => {
     try {
@@ -9,8 +9,8 @@ const replyController = {
             User, Like, Reply,
             { model: Reply, include: User }
           ],
-          order: [[Reply, 'createdAt', 'DESC']]
-        })
+        order: [[Reply, 'createdAt', 'DESC']]
+      })
 
       let users = await User.findAll({
         include: [
@@ -21,9 +21,9 @@ const replyController = {
 
       const user = await User.findByPk(helpers.getUser(req).id,
         {
-          raw: true,
-          nest: true
-        })
+        raw: true,
+        nest: true
+      })
 
       const likes = await Like.findAll({
         where: { UserId: helpers.getUser(req).id }
@@ -59,11 +59,27 @@ const replyController = {
         req.flash('error_messages', '回覆內容不能超過140字!')
         return res.redirect('back')
       }
-      await Reply.create({
+
+      const loginUserId = helpers.getUser(req).id
+      // Tweet 記錄最新一筆 回覆 資料
+      const newestReply = await Reply.create({
         UserId: helpers.getUser(req).id,
         TweetId: req.params.tweet_id,
         comment
       })
+      // 查找訂閱 loginUser 的所有 subscriber 並 mapping 為id
+      const allSubscribers = await helpers.getAllSubscribers(loginUserId)
+      // 制做 array 準備用在 NotificationLike bulkCreate
+      const createDataArray = allSubscribers.map(id => {
+        return {
+          celebrityId: loginUserId,
+          subscriberId: id,
+          replyeventId: newestReply.dataValues.id
+        }
+      })
+      // 更新通知列表 for 訂閱 loginUser 的所有 subscriber
+      await NotificationReply.bulkCreate(createDataArray)
+
       req.flash('success_messages', '成功新增回覆！')
       return res.redirect(`/tweets/${req.params.tweet_id}/replies`)
     } catch (err) {
