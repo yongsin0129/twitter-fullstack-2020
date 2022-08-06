@@ -63,15 +63,13 @@
     }
 
     socket.on('informSubscribersUpdateNote', () => {
-      console.log('收到，馬上跟後端聯絡拿取資料')
+      console.log('收到，馬上跟後端聯絡拿取最新的通知資料')
       socket.emit('updateNotification')
     })
 
     socket.on('updateNotification', ({ follow, like }) => {
       const array = follow.concat(like)
       array.sort(function (a, b) {
-        // Turn your strings into dates, and then subtract them
-        // to get a value that is either negative, positive, or zero.
         return new Date(b.createdAt) - new Date(a.createdAt)
       })
       array.forEach((note) => {

@@ -1,14 +1,6 @@
-const { io, chattingUsers } = require('./socketIo')
-const {
-  User,
-  Followship,
-  Subscription,
-  NotificationFollow,
-  NotificationLike,
-  Like,
-  Tweet
-} = require('./models')
-const { raw } = require('express')
+const { io } = require('./socketIo')
+const { getAllSubscribers } = require('./_helpers')
+const { User, Followship, NotificationFollow, NotificationLike, Like, Tweet } = require('./models')
 
 module.exports = socket => {
   const loginUserId = Number(socket.handshake.auth.userId)
@@ -18,41 +10,20 @@ module.exports = socket => {
   socket.on('notificationFollow', async targetId => {
     const targetUserId = Number(targetId)
 
-    console.log('loginUserId : ', loginUserId)
-    console.log('joinRoom : ', socket.adapter.rooms)
-    console.log('targetId : ', targetUserId)
-
-    if (loginUserId === Number(targetId)) {
+    if (loginUserId === targetUserId) {
       return console.log('error_messages', '不能追隨自己，不發送通知更新')
     } else {
-      const allSubscribers = (
-        await Subscription.findAll({
-          where: { celebrity_id: loginUserId },
-          raw: true
-        })
-      ).map(user => user.subscriberId.toString())
-
+      const allSubscribers = await getAllSubscribers(loginUserId)
       // 通知所有訂閱者，更新自已的通知列表
-      io.to(allSubscribers).emit('informSubscribersUpdateNote', allSubscribers)
-      console.log('allSubscribers', allSubscribers)
-      return console.log('success_messages', '發送通知更新給有訂閱的使用者')
+      io.to(allSubscribers).emit('informSubscribersUpdateNote')
     }
   })
 
   socket.on('notificationLike', async targetId => {
-    const targetUserId = Number(targetId)
-
-    const allSubscribers = (
-      await Subscription.findAll({
-        where: { celebrity_id: loginUserId },
-        raw: true
-      })
-    ).map(user => user.subscriberId.toString())
+    const allSubscribers = await getAllSubscribers(loginUserId)
 
     // 通知所有訂閱者，更新自已的通知列表
     io.to(allSubscribers).emit('informSubscribersUpdateNote')
-    console.log('allSubscribers', allSubscribers)
-    return console.log('success_messages', '發送通知更新給有訂閱的使用者')
   })
 
   socket.on('updateNotification', async () => {
@@ -61,7 +32,7 @@ module.exports = socket => {
     setTimeout(() => {
       Promise.all([
         NotificationFollow.findAll({
-          where: { subscriberId: loginUserId },
+          where: { subscriberId: loginUserId, checked: false },
           include: [
             { model: Followship, as: 'followEvent', include: User },
             { model: User, as: 'celebrity' }
@@ -70,7 +41,7 @@ module.exports = socket => {
           nest: true
         }),
         NotificationLike.findAll({
-          where: { subscriberId: loginUserId },
+          where: { subscriberId: loginUserId, checked: false },
           include: [
             { model: Like, as: 'likeEvent', include: { model: Tweet, include: User } },
             { model: User, as: 'celebrity' }

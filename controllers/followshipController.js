@@ -1,4 +1,4 @@
-const { Followship, Subscription, NotificationFollow } = require('../models')
+const { Followship, NotificationFollow } = require('../models')
 const helpers = require('../_helpers')
 const followshipController = {
   addFollowing: async (req, res, next) => {
@@ -11,17 +11,12 @@ const followshipController = {
 
       // Followship 記錄最新一筆追蹤資料
       const newestFollowship = await Followship.create({
-        followerId: helpers.getUser(req).id,
+        followerId: loginUserId,
         followingId: req.body.id
       })
 
       // 查找訂閱 loginUser 的所有 subscriber 並 mapping 為id
-      const allSubscribers = (
-        await Subscription.findAll({
-          where: { celebrity_id: loginUserId },
-          raw: true
-        })
-      ).map(user => user.subscriberId)
+      const allSubscribers = await helpers.getAllSubscribers(loginUserId)
 
       // 制做 array 準備用在 NotificationFollow bulkCreate
       const createDataArray = allSubscribers.map(id => {
@@ -41,6 +36,7 @@ const followshipController = {
       next(err)
     }
   },
+
   removeFollowing: async (req, res, next) => {
     try {
       const followship = await Followship.findOne({

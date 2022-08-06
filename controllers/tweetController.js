@@ -1,4 +1,4 @@
-const { Tweet, User, Like, Reply, Subscription, NotificationLike } = require('../models')
+const { Tweet, User, Like, Reply, NotificationLike } = require('../models')
 const helpers = require('../_helpers')
 const tweetController = {
   getTweets: async (req, res, next) => {
@@ -79,13 +79,10 @@ const tweetController = {
         UserId: loginUserId,
         TweetId: req.params.tweet_id
       })
+
       // 查找訂閱 loginUser 的所有 subscriber 並 mapping 為id
-      const allSubscribers = (
-        await Subscription.findAll({
-          where: { celebrity_id: loginUserId },
-          raw: true
-        })
-      ).map(user => user.subscriberId)
+      const allSubscribers = await helpers.getAllSubscribers(loginUserId)
+
       // 制做 array 準備用在 NotificationLike bulkCreate
       const createDataArray = allSubscribers.map(id => {
         return {
@@ -94,6 +91,7 @@ const tweetController = {
           likeeventId: newestLike.dataValues.id
         }
       })
+
       // 更新通知列表 for 訂閱 loginUser 的所有 subscriber
       await NotificationLike.bulkCreate(createDataArray)
 
