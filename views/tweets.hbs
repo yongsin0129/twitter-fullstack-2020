@@ -224,39 +224,4 @@
     }
   </script>
 
-  {{!-- --- socket.io region --}}
-  <script>
-    //  ---建立連線
-    const socket = io()
-    // ------ 前端使用的 id 
-    const loginUserId = Number('{{loginUser.id}}')
-    // ------ 後端使用的 id
-    socket.auth = { userId: '{{loginUser.id}}' }
-
-    // ------button function for posting follow like comment reply 
-
-    function addFollowship_notifyAll (targetId) {
-      socket.emit('notificationFollow', targetId)
-    }
-
-    socket.on('informSubscribersUpdateNote', () => {
-      console.log('收到，馬上跟後端聯絡拿取資料')
-      socket.emit('updateNotification')
-    })
-
-    socket.on('updateNotification', (array) => {
-      array.forEach((note) => {
-        const celebrity = note.celebrity.name
-        const followingUser = note.followEvent.User.name
-        console.log(`世紀大消息 ! ${celebrity} 追蹤了 ${followingUser} !`)
-      })
-
-    })
-
-
-
-  </script>
-
-
-
 </section>
