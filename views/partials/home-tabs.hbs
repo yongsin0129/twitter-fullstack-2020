@@ -22,6 +22,18 @@
               </div>
             </a>
           </li>
+          <li class="nav-item flex-nowrap-element mb-2">
+            <a class="nav-link text-dark" href="/notice">
+              <div class="d-flex">
+                {{#ifCond route 'notice'}}
+                <img src="/images/notice-orange.png" alt="icon">
+                {{else}}
+                <img src="/images/notice.png" alt="icon">
+                {{/ifCond}}
+                <span class="h5 h-orange {{#ifCond route 'notice'}}color-mask{{/ifCond}}">&nbsp;&nbsp;&nbsp;通知</span>
+              </div>
+            </a>
+          </li>
           <li class="nav-item flex-nowrap-element">
             <a class="nav-link text-dark" href="/message">
               <div class="d-flex">

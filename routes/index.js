@@ -42,6 +42,10 @@ router.get('/users/:id/followings', authenticated, getRecommendedUsers, userCont
 router.get('/message', authenticated, messageController.getAllChatroom)
 router.get('/private-message/:id', authenticated, messageController.getPrivateMessage)
 router.get('/private-message', authenticated, messageController.getPrivateMessage)
+router.get('/notices', authenticated, messageController.getNotices)
+router.delete('/subscribe/:subscribeId', authenticated, messageController.deleteSubscribe)
+router.post('/subscribe', authenticated, messageController.postSubscribe)
+
 
 router.use('/', generalErrorHandler)
 router.use('/', authenticated, tweetController.getTweets)
