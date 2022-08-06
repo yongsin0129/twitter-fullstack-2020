@@ -17,6 +17,7 @@ io.on('connection', async socket => {
   //   socket.emit('chat message', log)
   // })
   const loginUserId = socket.handshake.auth.userId
+  socket.join(loginUserId)
   // 透過資料庫找尋使用者資料
   const loginUser = await User.findByPk(loginUserId, { raw: true })
   // saving userId to object with socket ID
@@ -53,6 +54,9 @@ io.on('connection', async socket => {
 
   // --------------   監聽 --------------   private Message 的任何訊息
   require('./socketIo-pm')(socket)
+
+  // -------------   監聽 --------------   notification 的任何訊息
+  
 })
 
 server.listen(3000, () => {
