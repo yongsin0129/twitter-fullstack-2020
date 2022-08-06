@@ -14,20 +14,25 @@ module.exports = socket => {
     console.log('joinRoom : ', socket.adapter.rooms)
     console.log('targetId : ', targetUserId)
 
-    const allSubscribers = (
-      await Subscription.findAll({
-        where: { celebrity_id: loginUserId },
-        raw: true
-      })
-    ).map(user => user.subscriberId)
-
-    console.log('allSubscribers', allSubscribers)
-
     if (loginUserId === Number(targetId)) {
-      return console.log('error_messages', '自己不能追隨自己！')
+      return console.log('error_messages', '不能追隨自己，不發送通知更新')
     } else {
-      return console.log('success_messages', '追隨成功！')
+      const allSubscribers = (
+        await Subscription.findAll({
+          where: { celebrity_id: loginUserId },
+          raw: true
+        })
+      ).map(user => user.subscriberId.toString())
+
+      // 通知所有訂閱者，更新自已的通知列表
+      io.to(allSubscribers).emit('informSubscribersUpdateNote', allSubscribers)
+      console.log("allSubscribers", allSubscribers)
+      return console.log('success_messages', '發送通知更新給有訂閱的使用者')
     }
+  })
+
+  socket.on('updateNotification', async () => {
+    console.log(`前端使用者 id: ${loginUserId} 要求更新列表`)
   })
 
   /**

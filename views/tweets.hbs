@@ -134,7 +134,7 @@
           </div>
         </div>
         <script>
-          function countsReply(id, id2, id3) {
+          function countsReply (id, id2, id3) {
             const counts = document.getElementById(id2).value.length
             document.getElementById(id).innerText = counts + '/140'
             if (counts > 140) {
@@ -148,7 +148,7 @@
               document.getElementById(id3).innerText = '內容不可空白'
             }
           }
-          function checkformReply(id2) {
+          function checkformReply (id2) {
             const counts = document.getElementById(id2).value.length
             if (counts > 140) {
               alert('字數超出上限！')
@@ -201,7 +201,7 @@
 
 
   <script>
-    function counts() {
+    function counts () {
       const counts = document.querySelector('#description').value.length
       document.querySelector('.name-count span').innerText = counts + '/140'
       if (counts > 140) {
@@ -215,7 +215,7 @@
         document.querySelector('.name-helper span').innerText = '內容不可空白'
       }
     }
-    function checkform() {
+    function checkform () {
       const counts = document.querySelector('#description').value.length
       if (counts > 140) {
         alert('字數超出上限！')
@@ -235,10 +235,14 @@
 
     // button function for posting follow like comment reply 
 
-    function addFollowship_notifyAll () {
-      {{!-- !這邊的變數要改  followingId --}}
-      socket.emit('notificationFollow', '6')
+    function addFollowship_notifyAll (targetId) {
+      socket.emit('notificationFollow', targetId)
     }
+
+    socket.on('informSubscribersUpdateNote', () => {
+      console.log('收到，馬上確認通知列表')
+      socket.emit('updateNotification')
+    })
 
 
 
