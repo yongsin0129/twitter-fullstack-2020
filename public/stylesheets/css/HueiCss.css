@@ -693,3 +693,6 @@ section#Huei-region .hover-logout:hover img,
 section#Huei-region .hover-logout:focus img {
   filter: invert(50%) sepia(41%) saturate(6991%) hue-rotate(6deg) brightness(109%) contrast(102%);
 }
+section#Huei-region .hover-love:hover {
+  filter: invert(90%) sepia(41%) saturate(6991%) hue-rotate(6deg) brightness(109%) contrast(102%);
+}

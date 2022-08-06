@@ -844,4 +844,8 @@ section#Huei-region {
     }
 
   }
+
+  .hover-love:hover {
+    filter: invert(90%) sepia(41%) saturate(6991%) hue-rotate(6deg) brightness(109%) contrast(102%);
+  }
 }
