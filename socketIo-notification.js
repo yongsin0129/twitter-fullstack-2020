@@ -1,6 +1,14 @@
 const { io } = require('./socketIo')
 const { getAllSubscribers } = require('./_helpers')
-const { User, Followship, NotificationFollow, NotificationLike, Like, Tweet } = require('./models')
+const {
+  User,
+  Followship,
+  NotificationFollow,
+  NotificationLike,
+  NotificationTweet,
+  Like,
+  Tweet
+} = require('./models')
 
 module.exports = socket => {
   const loginUserId = Number(socket.handshake.auth.userId)
@@ -19,7 +27,7 @@ module.exports = socket => {
     }
   })
 
-  socket.on('notificationLike', async targetId => {
+  socket.on('notifyForAllSubscribers', async () => {
     const allSubscribers = await getAllSubscribers(loginUserId)
 
     // 通知所有訂閱者，更新自已的通知列表
@@ -48,9 +56,18 @@ module.exports = socket => {
           ],
           raw: true,
           nest: true
+        }),
+        NotificationTweet.findAll({
+          where: { subscriberId: loginUserId, checked: false },
+          include: [
+            { model: Tweet, as: 'tweetEvent', include: User },
+            { model: User, as: 'celebrity' }
+          ],
+          raw: true,
+          nest: true
         })
-      ]).then(([follow, like]) => {
-        io.to(`${loginUserId}`).emit('updateNotification', { follow, like })
+      ]).then(([follow, like, tweet]) => {
+        io.to(`${loginUserId}`).emit('updateNotification', { follow, like, tweet })
       })
     }, 1000)
   })

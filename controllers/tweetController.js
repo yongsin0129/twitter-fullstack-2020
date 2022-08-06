@@ -1,4 +1,4 @@
-const { Tweet, User, Like, Reply, NotificationLike } = require('../models')
+const { Tweet, User, Like, Reply, NotificationLike, NotificationTweet } = require('../models')
 const helpers = require('../_helpers')
 const tweetController = {
   getTweets: async (req, res, next) => {
@@ -61,10 +61,26 @@ const tweetController = {
         req.flash('error_messages', 'Tweet 內容不能超過140字!')
         return res.redirect('back')
       }
-      await Tweet.create({
-        UserId: helpers.getUser(req).id,
+
+      const loginUserId = helpers.getUser(req).id
+      // Tweet 記錄最新一筆 發文 資料
+      const newestTweet = await Tweet.create({
+        UserId: loginUserId,
         description
       })
+      // 查找訂閱 loginUser 的所有 subscriber 並 mapping 為id
+      const allSubscribers = await helpers.getAllSubscribers(loginUserId)
+      // 制做 array 準備用在 NotificationLike bulkCreate
+      const createDataArray = allSubscribers.map(id => {
+        return {
+          celebrityId: loginUserId,
+          subscriberId: id,
+          tweeteventId: newestTweet.dataValues.id
+        }
+      })
+      // 更新通知列表 for 訂閱 loginUser 的所有 subscriber
+      await NotificationTweet.bulkCreate(createDataArray)
+
       req.flash('success_messages', '成功新增Tweet!')
       return res.redirect('/tweets')
     } catch (err) {
@@ -74,7 +90,7 @@ const tweetController = {
   postLike: async (req, res, next) => {
     try {
       const loginUserId = helpers.getUser(req).id
-      // like 記錄最新一筆追蹤資料
+      // like 記錄最新一筆 愛心 資料
       const newestLike = await Like.create({
         UserId: loginUserId,
         TweetId: req.params.tweet_id
