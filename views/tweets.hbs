@@ -64,7 +64,7 @@
               </form>
               {{else}}
               <form action="/tweets/{{this.id}}/like" method="POST">
-                <button style="position:relative;bottom:5px;">
+                <button style="position:relative;bottom:5px;" onclick="addLike_notifyAll ({{this.id}})">
                   <img src="/images/like.png" style="width:13.17px;height:13.17px;margin-right:8px" alt="unlike">
                 </button>
               </form>

@@ -58,18 +58,35 @@
       socket.emit('notificationFollow', targetId)
     }
 
+    function addLike_notifyAll (targetId) {
+      socket.emit('notificationLike', targetId)
+    }
+
     socket.on('informSubscribersUpdateNote', () => {
       console.log('收到，馬上跟後端聯絡拿取資料')
       socket.emit('updateNotification')
     })
 
-    socket.on('updateNotification', (array) => {
+    socket.on('updateNotification', ({ follow, like }) => {
+      const array = follow.concat(like)
+      array.sort(function (a, b) {
+        // Turn your strings into dates, and then subtract them
+        // to get a value that is either negative, positive, or zero.
+        return new Date(b.createdAt) - new Date(a.createdAt)
+      })
       array.forEach((note) => {
         const celebrity = note.celebrity.name
-        const followingUser = note.followEvent.User.name
-        console.log(`世紀大消息 ! ${celebrity} 追蹤了 ${followingUser} !`)
+        if (note.followEvent) {
+          const followingUser = note.followEvent.User.name
+          console.log(`世紀大消息 ! ${celebrity} 追蹤了 ${followingUser} !`)
+        } else if (note.likeEvent) {
+          const likeUser = note.likeEvent.Tweet.User.name
+          console.log(`世紀大消息 ! ${celebrity} 喜歡 ${likeUser} 的推文內容 !`)
+        }
+
       })
     })
+
 
   </script>
 </body>

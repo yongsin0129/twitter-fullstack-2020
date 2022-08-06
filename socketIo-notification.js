@@ -1,5 +1,13 @@
 const { io, chattingUsers } = require('./socketIo')
-const { User, Followship, Subscription, NotificationFollow } = require('./models')
+const {
+  User,
+  Followship,
+  Subscription,
+  NotificationFollow,
+  NotificationLike,
+  Like,
+  Tweet
+} = require('./models')
 const { raw } = require('express')
 
 module.exports = socket => {
@@ -31,20 +39,47 @@ module.exports = socket => {
     }
   })
 
+  socket.on('notificationLike', async targetId => {
+    const targetUserId = Number(targetId)
+
+    const allSubscribers = (
+      await Subscription.findAll({
+        where: { celebrity_id: loginUserId },
+        raw: true
+      })
+    ).map(user => user.subscriberId.toString())
+
+    // 通知所有訂閱者，更新自已的通知列表
+    io.to(allSubscribers).emit('informSubscribersUpdateNote')
+    console.log('allSubscribers', allSubscribers)
+    return console.log('success_messages', '發送通知更新給有訂閱的使用者')
+  })
+
   socket.on('updateNotification', async () => {
     console.log(`前端使用者 id: ${loginUserId} 要求更新列表`)
 
     setTimeout(() => {
-      NotificationFollow.findAll({
-        where: { subscriberId: loginUserId },
-        include: [
-          { model: Followship, as: 'followEvent', include: User },
-          { model: User, as: 'celebrity' }
-        ],
-        raw: true,
-        nest: true
-      }).then(notification => {
-        io.to(`${loginUserId}`).emit('updateNotification', notification)
+      Promise.all([
+        NotificationFollow.findAll({
+          where: { subscriberId: loginUserId },
+          include: [
+            { model: Followship, as: 'followEvent', include: User },
+            { model: User, as: 'celebrity' }
+          ],
+          raw: true,
+          nest: true
+        }),
+        NotificationLike.findAll({
+          where: { subscriberId: loginUserId },
+          include: [
+            { model: Like, as: 'likeEvent', include: { model: Tweet, include: User } },
+            { model: User, as: 'celebrity' }
+          ],
+          raw: true,
+          nest: true
+        })
+      ]).then(([follow, like]) => {
+        io.to(`${loginUserId}`).emit('updateNotification', { follow, like })
       })
     }, 1000)
   })
