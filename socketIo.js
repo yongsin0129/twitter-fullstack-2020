@@ -56,7 +56,7 @@ io.on('connection', async socket => {
   require('./socketIo-pm')(socket)
 
   // -------------   監聽 --------------   notification 的任何訊息
-  
+  require('./socketIo-notification')(socket)
 })
 
 server.listen(3000, () => {
