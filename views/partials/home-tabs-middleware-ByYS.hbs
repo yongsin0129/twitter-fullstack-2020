@@ -52,9 +52,10 @@
             <a class="nav-link text-dark" href="/private-message">
               <div class="d-flex">
                 {{#ifCond route 'private-message'}}
-                <img src="/images/message-orange.png" alt="icon">
+                <img src="/images/privacy-message-orange.png" alt="icon">
                 {{else}}
-                <img src="/images/message.png" alt="icon">
+                <img src="/images/privacy-message.png" alt="icon"
+                  style="width:20px;height:20px;position:relative;left:3px;top:2px;margin-right:5px;">
                 {{/ifCond}}
                 <span
                   class="h5 h-orange {{#ifCond route 'private-message'}}color-mask{{/ifCond}}">&nbsp;&nbsp;&nbsp;私人訊息</span>
