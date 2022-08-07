@@ -64,18 +64,28 @@
         <div class="d-flex" style="margin-top:16px;">
           <button style="position:relative;bottom:5px;">
             <img src="/images/comment.png" style="width:25px;height:25px;position:relative;top:5px;" alt="comment"
-              data-bs-toggle="modal" data-bs-target="#tweet-reply-model">
+              data-bs-toggle="modal" data-bs-target="#tweet-reply-model" class="hover-bigger-icon">
           </button>
           {{#if isLiked}}
           <form action="/tweets/{{tweet.id}}/unlike" method="POST">
             <button style="position:relative;left:90px; top:2px">
-              <img src="/images/redLove.png" style="width:25px;height:25px;" alt="like">
+              <div class="d-flex lock">
+                <img src="/images/like.png" style="width:25px;height:25px;margin-right:8px" alt="unlike"
+                  class="icon-lock">
+                <img src="/images/redLove.png" style="width:25px;height:25px;margin-right:8px" alt="unlike"
+                  class="icon-unlock">
+              </div>
             </button>
           </form>
           {{else}}
           <form action="/tweets/{{tweet.id}}/like" method="POST">
             <button style="position:relative;left:90px;top:2px">
-              <img src="/images/like.png" style="width:25px;height:25px;" alt="unlike">
+              <div class="d-flex lock">
+                <img src="/images/like.png" style="width:25px;height:25px;margin-right:8px" alt="unlike"
+                  class="icon-unlock">
+                <img src="/images/redLove.png" style="width:25px;height:25px;margin-right:8px" alt="unlike"
+                  class="icon-lock">
+              </div>
             </button>
           </form>
           {{/if}}

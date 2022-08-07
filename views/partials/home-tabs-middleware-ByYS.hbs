@@ -24,7 +24,7 @@
             </a>
           </li>
           <li class="nav-item flex-nowrap-element mt-3">
-            <a class="nav-link text-dark hover-home-tab" href="/notices">
+            <a class="nav-link text-dark hover-home-tab" href="/notices/{{loginUser.id}}">
               <div class="d-flex">
                 {{#ifCond route 'notice'}}
                 <img src="/images/notice-orange.png" alt="icon">
@@ -140,7 +140,7 @@
   <!-- 新增 tweet Modal 結束 -->
 
   <script>
-    function countsTab () {
+    function countsTab() {
       const counts = document.querySelector('#description').value.length
       document.querySelector('.name-count-tab span').innerText = counts + '/140'
       if (counts > 140) {
@@ -154,7 +154,7 @@
         document.querySelector('.name-helper-tab span').innerText = '內容不可空白'
       }
     }
-    function checkformTab () {
+    function checkformTab() {
       const counts = document.querySelector('#description').value.length
       if (counts > 140) {
         alert('字數超出上限！')
