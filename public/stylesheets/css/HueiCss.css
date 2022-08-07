@@ -734,6 +734,25 @@ section#Huei-region .change-icon.icon-change {
 section#Huei-region .change-icon:hover .icon-change {
   display: inline !important;
 }
+section#Huei-region .nav-circle-count {
+  min-width: 20px;
+  position: relative;
+  bottom: 10px;
+  right: 15px;
+  width: auto;
+  height: 20px;
+  padding: 0 3px;
+  font-size: 13px;
+  line-height: 18px;
+  border-radius: 20px;
+  text-align: center;
+  color: #fff;
+  background: #f60;
+  border: 1px solid #fff;
+}
+section#Huei-region .userName-tweet-hover:hover {
+  color: #FF6600;
+}
 
 @keyframes mainColorBlink {
   0% {

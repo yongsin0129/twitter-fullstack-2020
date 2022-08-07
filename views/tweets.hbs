@@ -32,7 +32,7 @@
       <!--新增推文 結束-->
 
       <!--每一則 tweet -->
-      <div class=" card-override">
+      <div class="card-override">
         {{#each tweets}}
         <div class="tweet-card d-flex" style="margin:0px;">
           <a class="" href="/users/{{this.User.id}}/tweets">
@@ -41,7 +41,7 @@
           </a>
           <div>
             <div class="head d-flex">
-              <a class="name" href="/users/{{this.User.id}}/tweets">{{this.User.name}}</a>
+              <a class="name userName-tweet-hover" href="/users/{{this.User.id}}/tweets">{{this.User.name}}</a>
               <a class="account" href="/users/{{this.User.id}}/tweets">@{{this.User.account}}</a>
               <div class="time">•{{momentNow this.createdAt}}</div>
             </div>

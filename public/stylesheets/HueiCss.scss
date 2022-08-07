@@ -895,7 +895,31 @@ section#Huei-region {
   .change-icon:hover .icon-change {
     display: inline !important;
   }
+
+  //左側導覽列計數圓圈
+  .nav-circle-count {
+    min-width: 20px;
+    position: relative;
+    bottom: 10px;
+    right: 15px;
+    width: auto;
+    height: 20px;
+    padding: 0 3px;
+    font-size: 13px;
+    line-height: 18px;
+    border-radius: 20px;
+    text-align: center;
+    color: #fff;
+    background: #f60;
+    border: 1px solid #fff;
+  }
+
+  .userName-tweet-hover:hover {
+    color: $mainColor;
+  }
 }
+
+
 
 @keyframes mainColorBlink {
   0% {
