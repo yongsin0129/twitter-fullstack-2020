@@ -17,6 +17,13 @@
   <link rel="stylesheet" href="/stylesheets/css/HueiCss.css">
   <link rel="stylesheet" href="/stylesheets/css/JuneCss.css">
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+  <script>
+    // socketIo 建立連線
+    const socket = io()
+    socket.auth = { userId: '{{loginUser.id}}' }
+  </script>
+  <script src="/javascripts/socketIo.js"></script>
 </head>
 
 <body>
@@ -42,37 +49,6 @@
   </script>
 
 
-  {{!-- --- socket.io region --}}
-
-  <script>
-    //  ---建立連線
-    const socket = io()
-    // ------ 前端使用的 id 
-    const loginUserId = Number('{{loginUser.id}}')
-    // ------ 後端使用的 id
-    socket.auth = { userId: '{{loginUser.id}}' }
-
-    socket.emit('updateNotification')
-
-    socket.on('informSubscribersUpdateNote', () => {
-      console.log('收到，馬上跟後端聯絡拿取最新的通知資料')
-      socket.emit('updateNotification')
-    })
-
-    socket.on('updateNotification', ({ follow, like, tweet, reply }) => {
-      const array = follow.concat(like, tweet, reply)
-      if (array.length > 0) {
-        $('#tab-notification').addClass('main-color-blink')
-      }
-
-    })
-
-    // ------button function for posting follow like comment reply 
-    function notifyForAllSubscribers () {
-      socket.emit('notifyForAllSubscribers')
-    }
-
-  </script>
 </body>
 
 </html>

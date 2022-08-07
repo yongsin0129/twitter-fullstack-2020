@@ -1,3 +1,4 @@
+
 <section id="Huei-region" class="">
   <div class="flex-message-page">
     <!--左側導覽列-->
@@ -47,11 +48,11 @@ flex-direction: column;">
     <!--socketIo script 開始-->
     <script>
       // step 1 ---- 建立連線
-      const socket = io()
+      const AllChatroomSocket = io("/all_chatroom")
 
-      socket.auth = { userId: '{{loginUser.id}}' }
+      AllChatroomSocket.auth = { userId: '{{loginUser.id}}' }
 
-      socket.emit('login')
+      AllChatroomSocket.emit('login')
 
       // 抓取必要的 DOM
       const allUserListDOM = document.getElementById('allUserList')
@@ -67,14 +68,14 @@ flex-direction: column;">
         e.preventDefault()
         if (input.value) {
           // socket.emit 可以針對頻道傳送物件
-          socket.emit('chat message', input.value)
+          AllChatroomSocket.emit('chat message', input.value)
           input.value = ''
         }
       })
 
 
       // step3 ---- socket 監聽從 server 在 chat message 傳來的資料   
-      socket.on('chat message', function (receivedObj) {
+      AllChatroomSocket.on('chat message', function (receivedObj) {
         if (receivedObj.id !== loginUserId) {
           // 他人的訊息 --- 出現在左邊
           const leftHandMessage = document.createElement('li')
@@ -113,8 +114,7 @@ flex-direction: column;">
 
 
       // ---- ---- ---- 全體廣播頻道 ---- ---- ----
-      socket.on('broadcast', (usersData) => {
-
+      AllChatroomSocket.on('broadcast', (usersData) => {
         const usersArray = Object.values(usersData)
 
         //  userList 顯示邏輯 --- 
@@ -139,8 +139,7 @@ flex-direction: column;">
       })
 
       // ---- ---- ---- 使用者登入事件 ---- ---- ----
-      socket.on('loginEvent', (userData) => {
-
+      AllChatroomSocket.on('loginEvent', (userData) => {
         //  userLogin 顯示邏輯 --- 
         const userStatus = document.createElement('li')
         userStatus.className = 'li-status-message'
@@ -155,7 +154,7 @@ flex-direction: column;">
       })
 
       // ---- ---- ---- 使用者登出事件 ---- ---- ----
-      socket.on('logoutEvent', (userData) => {
+      AllChatroomSocket.on('logoutEvent', (userData) => {
         //  userLogin 顯示邏輯 --- 
         const userStatus = document.createElement('li')
         userStatus.className = 'li-status-message'
@@ -167,31 +166,6 @@ flex-direction: column;">
           `
         messages.appendChild(userStatus)
         scrollbarRegion.scrollTo(0, document.body.scrollHeight)
-      })
-
-      function timeFormat (timeObj) {
-        const hour = timeObj.getHours() //0-24
-        console.log("timeFormat ~ hour", hour)
-        const minute = timeObj.getMinutes() //0-59
-        console.log("timeFormat ~ minute", minute)
-        if (hour >= 12) return `下午${hour - 12}:${minute}`
-        else return `上午${hour}:${minute}`
-      }
-
-
-      // --- --- 監控有無新的通知
-      socket.emit('updateNotification')
-
-      socket.on('informSubscribersUpdateNote', () => {
-        console.log('收到，馬上跟後端聯絡拿取最新的通知資料')
-        socket.emit('updateNotification')
-      })
-
-      socket.on('updateNotification', ({ follow, like, tweet, reply }) => {
-        const array = follow.concat(like, tweet, reply)
-        if (array.length > 0) {
-        $('#tab-notification').addClass('main-color-blink')
-        }
       })
 
     </script>

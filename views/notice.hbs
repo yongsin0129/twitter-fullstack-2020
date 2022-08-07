@@ -29,29 +29,10 @@
 </section>
 
 <script>
-  //  ---建立連線
-  const socket = io()
   // ------ 前端使用的 id 
   const loginUserId = Number('{{loginUser.id}}')
-  // ------ 後端使用的 id
-  socket.auth = { userId: '{{loginUser.id}}' }
-  // 刷新頁面時就向後端拿更新的通知資料
-  socket.emit('updateNotification')
 
   // ------button function for posting follow like comment reply 
-
-  function notifyForAllSubscribers () {
-    socket.emit('notifyForAllSubscribers')
-  }
-
-
-  socket.on('informSubscribersUpdateNote', () => {
-    console.log('收到，馬上跟後端聯絡拿取最新的通知資料')
-    socket.emit('updateNotification')
-  })
-
-
-
 
   socket.on('updateNotification', ({ follow, like, tweet, reply }) => {
     // 把收到的 notification 資料整理並依時間排序
@@ -64,7 +45,6 @@
     let resultRawHTML = ''
     // 將每一筆資料依分類產生 rawHTML
     array.forEach((note) => {
-      console.log("array.forEach ~ note", note)
       const celebrity = note.celebrity.name
       if (note.followEvent) {
         resultRawHTML += generateFollowNotificationRawHTML(note)
@@ -162,6 +142,7 @@
 
   function cleanAllNotifications () {
     const unreadCount = document.querySelector('.ul-user-notice').childElementCount
+    $('#tab-notification').removeClass('main-color-blink')
     if (unreadCount) return socket.emit('cleanAllNotifications')
     return alert('通知已經全部已讀')
 
