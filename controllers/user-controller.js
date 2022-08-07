@@ -90,6 +90,7 @@ const userController = {
         const user = getUser(req)
         if (user) {
           user.isFollowed = user.Followings.some(u => u.id === targetUser.id)
+          user.isSubscribed = user.celebrity.some(u => u.id === targetUser.id)
         }
         const tweetsData = tweets.map(t => ({
           ...t.toJSON(),
@@ -121,6 +122,7 @@ const userController = {
         const user = getUser(req)
         if (user) {
           user.isFollowed = user.Followings.some(u => u.id === targetUser.id)
+          user.isSubscribed = user.celebrity.some(u => u.id === targetUser.id)
         }
         res.locals.tweetsLength = targetUser.Tweets.length
         res.render('profile', { targetUser: targetUser.toJSON(), replies, user, reply: true })
@@ -149,14 +151,15 @@ const userController = {
         const user = getUser(req)
         if (user) {
           user.isFollowed = user.Followings.some(u => u.id === targetUser.id)
+          user.isSubscribed = user.celebrity.some(u => u.id === targetUser.id)
         }
         const likesData = likes
           .map(l => ({
-            ...l.toJSON(),
-            likedCount: l.Tweet.Likes.length,
-            repliedCount: l.Tweet.Replies.length,
-            isLiked: user ? l.Tweet.Likes.some(like => like.UserId === user.id) : false
-          }))
+          ...l.toJSON(),
+          likedCount: l.Tweet.Likes.length,
+          repliedCount: l.Tweet.Replies.length,
+          isLiked: user ? l.Tweet.Likes.some(like => like.UserId === user.id) : false
+        }))
         res.locals.tweetsLength = targetUser.Tweets.length
         res.render('profile', { targetUser: targetUser.toJSON(), likes: likesData, user, like: true })
       })
