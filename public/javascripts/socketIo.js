@@ -19,3 +19,10 @@ socket.on('updateNotification', ({ follow, like, tweet, reply }) => {
 function notifyForAllSubscribers () {
   socket.emit('notifyForAllSubscribers')
 }
+
+function timeFormat (timeObj) {
+  const hour = timeObj.getHours() //0-24
+  const minute = timeObj.getMinutes() //0-59
+  if (hour >= 12) return `下午${hour - 12}:${minute}`
+  else return `上午${hour}:${minute}`
+}
