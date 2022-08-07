@@ -52,3 +52,4 @@ server.listen(3000, () => {
 module.exports = { io }
 
 require('./socketIo-pm')
+require('./socketIo-notification')

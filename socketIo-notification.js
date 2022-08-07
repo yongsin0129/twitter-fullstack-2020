@@ -12,8 +12,9 @@ const {
   Reply
 } = require('./models')
 
-module.exports = socket => {
+io.on('connection', socket => {
   const loginUserId = Number(socket.handshake.auth.userId)
+  socket.join(`${loginUserId}`)
 
   // 監聽 followship notification event
 
@@ -89,22 +90,4 @@ module.exports = socket => {
       io.to(`${loginUserId}`).emit('informSubscribersUpdateNote')
     })
   })
-  /**
-   * subscription 用 express 來做會比較好，不需要用 socket.io   *
-   */
-  // socket.on('subscription', async targetId => {
-  //   console.log('loginUserId : ', loginUserId)
-  //   console.log('joinRoom : ', socket.adapter.rooms)
-  //   console.log('targetId : ', Number(targetId))
-
-  //   if (loginUserId === Number(targetId)) {
-  //     return console.log('error_messages', '自己不能訂閱自已！')
-  //   } else {
-  //     await Subscription.create({
-  //       celebrityId: loginUserId,
-  //       subscriberId: Number(targetId)
-  //     })
-  //     return console.log('success_messages', '追隨成功！')
-  //   }
-  // })
-}
+})

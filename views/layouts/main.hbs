@@ -17,6 +17,12 @@
   <link rel="stylesheet" href="/stylesheets/css/HueiCss.css">
   <link rel="stylesheet" href="/stylesheets/css/JuneCss.css">
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+  <script>
+    // socketIo 建立連線
+    const socket = io()
+    socket.auth = { userId: '{{loginUser.id}}' }
+  </script>
   <script src="/javascripts/socketIo.js"></script>
 </head>
 
