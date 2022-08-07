@@ -71,6 +71,24 @@ module.exports = socket => {
     }, 1000)
   })
 
+  socket.on('cleanAllNotifications', () => {
+    Promise.all([
+      NotificationFollow.destroy({
+        where: { subscriberId: loginUserId, checked: false }
+      }),
+      NotificationLike.destroy({
+        where: { subscriberId: loginUserId, checked: false }
+      }),
+      NotificationTweet.destroy({
+        where: { subscriberId: loginUserId, checked: false }
+      }),
+      NotificationReply.destroy({
+        where: { subscriberId: loginUserId, checked: false }
+      })
+    ]).then(() => {
+      io.to(`${loginUserId}`).emit('informSubscribersUpdateNote')
+    })
+  })
   /**
    * subscription 用 express 來做會比較好，不需要用 socket.io   *
    */
