@@ -17,18 +17,6 @@ module.exports = socket => {
 
   // 監聽 followship notification event
 
-  socket.on('notificationFollow', async targetId => {
-    const targetUserId = Number(targetId)
-
-    if (loginUserId === targetUserId) {
-      return console.log('error_messages', '不能追隨自己，不發送通知更新')
-    } else {
-      const allSubscribers = await getAllSubscribers(loginUserId)
-      // 通知所有訂閱者，更新自已的通知列表
-      io.to(allSubscribers).emit('informSubscribersUpdateNote')
-    }
-  })
-
   socket.on('notifyForAllSubscribers', async () => {
     const allSubscribers = await getAllSubscribers(loginUserId)
 
@@ -71,7 +59,7 @@ module.exports = socket => {
         NotificationReply.findAll({
           where: { subscriberId: loginUserId, checked: false },
           include: [
-            { model: Reply, as: 'replyEvent', include: User },
+            { model: Reply, as: 'replyEvent', include: { model: Tweet, include: User } },
             { model: User, as: 'celebrity' }
           ],
           raw: true,

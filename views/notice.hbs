@@ -11,96 +11,9 @@
           通知
         </span>
       </div>
-      <ul class="ul-user-notice">
-        <li class="li-user-notice">
-          <a class="" href="/users/{{user.id}}/tweets">
-            <img src="{{#if user.avatar}}{{user.avatar}}{{else}}/images/icon/logo-gray.png{{/if}}" alt="Picture"
-              class="img-user-avatar">
-          </a>
-          <div class="div-user-notice-title">
-            What is Vue?
-          </div>
-          <div class="div-user-notice-content">
-            Vue is a JavaScript framework for building user interfaces. It builds on top of standard
-            HTML, CSS and JavaScript, and provides a declarative and component-based programming model that helps you
-            efficiently develop user interfaces, be it simple or complex.
-          </div>
-        </li>
+      <ul class="ul-user-notice" id="ul-user-notice">
 
-        <li class="li-user-notice">
-          <a class="" href="/users/{{user.id}}/tweets">
-            <img src="{{#if user.avatar}}{{user.avatar}}{{else}}/images/icon/logo-gray.png{{/if}}" alt="Picture"
-              class="img-user-avatar">
-          </a>
-          <div class="div-user-notice-title">
-            What is Vue?
-          </div>
-          <div class="div-user-notice-content">
-            Vue is a JavaScript framework for building user interfaces. It builds on top of standard
-            HTML, CSS and JavaScript, and provides a declarative and component-based programming model that helps you
-            efficiently develop user interfaces, be it simple or complex.
-          </div>
-        </li>
-
-        <li class="li-user-notice">
-          <a class="" href="/users/{{user.id}}/tweets">
-            <img src="{{#if user.avatar}}{{user.avatar}}{{else}}/images/icon/logo-gray.png{{/if}}" alt="Picture"
-              class="img-user-avatar">
-          </a>
-          <div class="div-user-notice-title">
-            What is Vue?
-          </div>
-          <div class="div-user-notice-content">
-            Vue is a JavaScript framework for building user interfaces. It builds on top of standard
-            HTML, CSS and JavaScript, and provides a declarative and component-based programming model that helps you
-            efficiently develop user interfaces, be it simple or complex.
-          </div>
-        </li>
-
-        <li class="li-user-notice">
-          <a class="" href="/users/{{user.id}}/tweets">
-            <img src="{{#if user.avatar}}{{user.avatar}}{{else}}/images/icon/logo-gray.png{{/if}}" alt="Picture"
-              class="img-user-avatar">
-          </a>
-          <div class="div-user-notice-title">
-            What is Vue?
-          </div>
-          <div class="div-user-notice-content">
-            Vue is a JavaScript framework for building user interfaces. It builds on top of standard
-            HTML, CSS and JavaScript, and provides a declarative and component-based programming model that helps you
-            efficiently develop user interfaces, be it simple or complex.
-          </div>
-        </li>
-
-        <li class="li-user-notice">
-          <a class="" href="/users/{{user.id}}/tweets">
-            <img src="{{#if user.avatar}}{{user.avatar}}{{else}}/images/icon/logo-gray.png{{/if}}" alt="Picture"
-              class="img-user-avatar">
-          </a>
-          <div class="div-user-notice-title">
-            What is Vue?
-          </div>
-          <div class="div-user-notice-content">
-            Vue is a JavaScript framework for building user interfaces. It builds on top of standard
-            HTML, CSS and JavaScript, and provides a declarative and component-based programming model that helps you
-            efficiently develop user interfaces, be it simple or complex.
-          </div>
-        </li>
-
-        <li class="li-user-notice">
-          <a class="" href="/users/{{user.id}}/tweets">
-            <img src="{{#if user.avatar}}{{user.avatar}}{{else}}/images/icon/logo-gray.png{{/if}}" alt="Picture"
-              class="img-user-avatar">
-          </a>
-          <div class="div-user-notice-title">
-            What is Vue?
-          </div>
-          <div class="div-user-notice-content">
-            Vue is a JavaScript framework for building user interfaces. It builds on top of standard
-            HTML, CSS and JavaScript, and provides a declarative and component-based programming model that helps you
-            efficiently develop user interfaces, be it simple or complex.
-          </div>
-        </li>
+        {{!-- 通知區塊 由 js 動態產生 --}}
 
       </ul>
     </div>
@@ -111,3 +24,138 @@
     </section>
   </div>
 </section>
+
+<script>
+  //  ---建立連線
+  const socket = io()
+  // ------ 前端使用的 id 
+  const loginUserId = Number('{{loginUser.id}}')
+  // ------ 後端使用的 id
+  socket.auth = { userId: '{{loginUser.id}}' }
+  // 刷新頁面時就向後端拿更新的通知資料
+  socket.emit('updateNotification')
+
+  // ------button function for posting follow like comment reply 
+
+  function notifyForAllSubscribers () {
+    socket.emit('notifyForAllSubscribers')
+  }
+
+
+  socket.on('informSubscribersUpdateNote', () => {
+    console.log('收到，馬上跟後端聯絡拿取最新的通知資料')
+    socket.emit('updateNotification')
+  })
+
+
+
+
+  socket.on('updateNotification', ({ follow, like, tweet, reply }) => {
+    // 把收到的 notification 資料整理並依時間排序
+    const array = follow.concat(like, tweet, reply)
+    array.sort(function (a, b) {
+      return new Date(b.createdAt) - new Date(a.createdAt)
+    })
+    // 抓出要更新頁面的 DOM 
+    const ul_user_noticeDOM = $('#ul-user-notice')
+    let resultRawHTML = ''
+    // 將每一筆資料依分類產生 rawHTML
+    array.forEach((note) => {
+      console.log("array.forEach ~ note", note)
+      const celebrity = note.celebrity.name
+      if (note.followEvent) {
+        resultRawHTML += generateFollowNotificationRawHTML(note)
+      } else if (note.likeEvent) {
+        resultRawHTML += generateLikeNotificationRawHTML(note)
+      } else if (note.tweetEvent) {
+        resultRawHTML += generateTweetNotificationRawHTML(note)
+      } else if (note.replyEvent) {
+        resultRawHTML += generateReplyNotificationRawHTML(note)
+      }
+
+    })
+    // 更新頁面
+    ul_user_noticeDOM.html(resultRawHTML)
+  })
+
+
+  function generateFollowNotificationRawHTML (note) {
+
+    const rawHTML =
+      `
+      <li class="li-user-notice">
+        <a class="" href="/users/${note.celebrityId}/tweets">
+          <img src="${note.celebrity.avatar}" alt="Picture"
+            class="img-user-avatar">
+        </a>
+        <div class="div-user-notice-title">
+          ${note.celebrity.name} 開始追蹤 ${checkTargetIsMyself(note.followEvent.User.id) ? '你' : note.followEvent.User.name}
+        </div>
+      </li>
+      `
+    return rawHTML
+  }
+
+  function generateLikeNotificationRawHTML (note) {
+
+    const rawHTML =
+      `
+      <li class="li-user-notice">
+        <a class="" href="/users/${note.celebrityId}/tweets">
+          <img src="${note.celebrity.avatar}" alt="Picture"
+            class="img-user-avatar">
+        </a>
+        <div class="div-user-notice-title">
+          ${note.celebrity.name} 喜歡 ${checkTargetIsMyself(note.likeEvent.Tweet.User.id) ? '你' : note.likeEvent.Tweet.User.name} 的貼文          
+        </div>
+      </li>
+      `
+    return rawHTML
+  }
+
+  function generateTweetNotificationRawHTML (note) {
+
+    const rawHTML =
+      `
+      <li class="li-user-notice">
+        <a class="" href="/users/${note.celebrityId}/tweets">
+          <img src="${note.celebrity.avatar}" alt="Picture"
+            class="img-user-avatar">
+        </a>
+        <div class="div-user-notice-title">
+          ${note.celebrity.name} 有新的推文通知
+        </div>
+        <div class="div-user-notice-content">
+          ${note.tweetEvent.description}
+        </div>
+      </li>
+      `
+    return rawHTML
+  }
+
+  function generateReplyNotificationRawHTML (note) {
+
+    const rawHTML =
+      `
+      <li class="li-user-notice">
+        <a class="" href="/users/${note.celebrityId}/tweets">
+          <img src="${note.celebrity.avatar}" alt="Picture"
+            class="img-user-avatar">
+        </a>
+        <div class="div-user-notice-title">
+          ${note.celebrity.name} 回覆了 ${checkTargetIsMyself(note.replyEvent.Tweet.User.id) ? '你' : note.replyEvent.Tweet.User.name} 的一則推文          
+        </div>
+        <div class="div-user-notice-content">
+          ${note.replyEvent.comment}
+        </div>
+      </li>
+      `
+    return rawHTML
+  }
+
+  function checkTargetIsMyself (userId) {
+    return userId === loginUserId
+  }
+
+
+</script>
