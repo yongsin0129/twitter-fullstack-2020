@@ -585,3 +585,114 @@ section#Huei-region .flex-message-page .public-message .public-message-footer .s
   top: 22px;
   left: 22px;
 }
+section#Huei-region .privacy-notice {
+  margin-left: 24px;
+  margin-right: 24px;
+  border-left: 1px solid #E6ECF0;
+  border-right: 1px solid #E6ECF0;
+}
+section#Huei-region .privacy-notice .user-notice-top {
+  height: 74px;
+  width: 640px;
+  border-bottom: 1px solid #E6ECF0;
+}
+section#Huei-region .privacy-notice .user-notice-top span {
+  position: relative;
+  top: 23px;
+  margin-left: 24px;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 26px;
+  color: #171725;
+}
+section#Huei-region .privacy-notice .ul-user-notice {
+  max-height: 740px;
+  width: 640px;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  overflow-y: scroll;
+  scrollbar-color: #F1F1F5 #FAFAFB;
+  scrollbar-width: thin;
+  overflow-x: hidden;
+}
+section#Huei-region .privacy-notice .ul-user-notice::-webkit-scrollbar {
+  width: 6px;
+}
+section#Huei-region .privacy-notice .ul-user-notice::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+section#Huei-region .privacy-notice .li-user-notice {
+  width: 640px;
+  height: auto;
+  border-bottom: 1px solid #E6ECF0;
+}
+section#Huei-region .privacy-notice .li-user-notice .img-user-avatar {
+  margin-top: 16px;
+  margin-left: 15px;
+  width: 30px;
+  height: 30px;
+}
+section#Huei-region .privacy-notice .li-user-notice .div-user-notice-title {
+  position: relative;
+  top: 5px;
+  margin-left: 15px;
+  width: auto;
+  height: auto;
+  max-width: 510px;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 26px;
+  color: #1C1C1C;
+  letter-spacing: 0px;
+  text-align: left;
+  word-wrap: break-word;
+}
+section#Huei-region .privacy-notice .li-user-notice .div-user-notice-content {
+  width: auto;
+  height: auto;
+  max-width: 510px;
+  margin-top: 6px;
+  margin-left: 15px;
+  margin-bottom: 16px;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 26px;
+  color: #171725;
+  word-wrap: break-word;
+}
+section#Huei-region .notice-user-tabs {
+  width: 416px;
+  height: 820px;
+  background-color: #FAFAFB;
+  background: #FAFAFB;
+  border-radius: 16px;
+  padding-left: 10px;
+}
+section#Huei-region .hover-home-tab:hover,
+section#Huei-region .hover-home-tab:focus {
+  box-shadow: 0 0.5em 0.5em -0.4em var(--hover);
+  transform: translateY(-0.1em);
+  color: #FF6600 !important;
+}
+section#Huei-region .hover-home-tab:hover .hover-img,
+section#Huei-region .hover-home-tab:focus .hover-img {
+  filter: invert(50%) sepia(41%) saturate(6991%) hue-rotate(6deg) brightness(109%) contrast(102%);
+}
+section#Huei-region .hover-logout:hover,
+section#Huei-region .hover-logout:focus {
+  box-shadow: 0 0.5em 0.5em -0.4em var(--hover);
+  transform: translateY(-0.1em);
+}
+section#Huei-region .hover-logout:hover span,
+section#Huei-region .hover-logout:focus span {
+  color: #FF6600 !important;
+}
+section#Huei-region .hover-logout:hover img,
+section#Huei-region .hover-logout:focus img {
+  filter: invert(50%) sepia(41%) saturate(6991%) hue-rotate(6deg) brightness(109%) contrast(102%);
+}
+section#Huei-region .hover-love:hover {
+  filter: invert(90%) sepia(41%) saturate(6991%) hue-rotate(6deg) brightness(109%) contrast(102%);
+}

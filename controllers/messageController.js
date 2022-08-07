@@ -14,6 +14,27 @@ const messageController = {
     } catch (err) {
       next(err)
     }
+  },
+  getNotices: async (req, res, next) => {
+    try {
+      res.render('notice')
+    } catch (err) {
+      next(err)
+    }
+  },
+  postSubscribe: async (req, res, next) => {
+    try {
+
+    } catch (err) {
+      next(err)
+    }
+  },
+  deleteSubscribe: async (req, res, next) => {
+    try {
+
+    } catch (err) {
+      next(err)
+    }
   }
 }
 module.exports = messageController
