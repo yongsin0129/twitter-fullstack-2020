@@ -1,3 +1,4 @@
+@charset "UTF-8";
 section#Huei-region body {
   margin: 0;
   padding: 0;
@@ -226,6 +227,16 @@ section#Huei-region .tweet-user-avatar {
 section#Huei-region .flex-nowrap-element {
   white-space: nowrap;
   width: 173px;
+}
+section#Huei-region .flex-nowrap-element .main-color-blink {
+  background-color: #FF6600;
+  animation-name: mainColorBlink;
+  animation-duration: 1s;
+  /*動畫持續時間，單位為秒*/
+  animation-delay: 0.5s;
+  /*動畫延遲開始時間*/
+  animation-iteration-count: infinite;
+  /*動畫次數，infinite 為無限次*/
 }
 section#Huei-region .position-left {
   position: relative;
@@ -705,4 +716,16 @@ section#Huei-region .hover-logout:focus img {
 }
 section#Huei-region .hover-love:hover {
   filter: invert(90%) sepia(41%) saturate(6991%) hue-rotate(6deg) brightness(109%) contrast(102%);
+}
+
+@keyframes mainColorBlink {
+  0% {
+    background-color: #FF6600;
+  }
+  50% {
+    background-color: white;
+  }
+  100% {
+    background-color: #FF6600;
+  }
 }

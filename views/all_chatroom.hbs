@@ -51,7 +51,7 @@ flex-direction: column;">
 
       socket.auth = { userId: '{{loginUser.id}}' }
 
-      socket.emit('login', { userId: '{{loginUser.id}}' })
+      socket.emit('login')
 
       // 抓取必要的 DOM
       const allUserListDOM = document.getElementById('allUserList')
@@ -177,6 +177,22 @@ flex-direction: column;">
         if (hour >= 12) return `下午${hour - 12}:${minute}`
         else return `上午${hour}:${minute}`
       }
+
+
+      // --- --- 監控有無新的通知
+      socket.emit('updateNotification')
+
+      socket.on('informSubscribersUpdateNote', () => {
+        console.log('收到，馬上跟後端聯絡拿取最新的通知資料')
+        socket.emit('updateNotification')
+      })
+
+      socket.on('updateNotification', ({ follow, like, tweet, reply }) => {
+        const array = follow.concat(like, tweet, reply)
+        if (array.length > 0) {
+        $('#tab-notification').addClass('main-color-blink')
+        }
+      })
 
     </script>
     <!--socketIo script 姞束-->

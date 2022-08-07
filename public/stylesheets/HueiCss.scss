@@ -276,6 +276,17 @@ section#Huei-region {
   .flex-nowrap-element {
     white-space: nowrap;
     width: 173px;
+
+    .main-color-blink {
+      background-color: $mainColor;
+      animation-name: mainColorBlink;
+      animation-duration: 1s;
+      /*動畫持續時間，單位為秒*/
+      animation-delay: 0.5s;
+      /*動畫延遲開始時間*/
+      animation-iteration-count: infinite;
+      /*動畫次數，infinite 為無限次*/
+    }
   }
 
   .position-left {
@@ -735,6 +746,7 @@ section#Huei-region {
       .btn-checked {
         margin: 1rem 1rem 1rem auto;
         background-color: $dark40;
+
         &:hover {
           transform: scale(1.02)
         }
@@ -859,5 +871,19 @@ section#Huei-region {
 
   .hover-love:hover {
     filter: invert(90%) sepia(41%) saturate(6991%) hue-rotate(6deg) brightness(109%) contrast(102%);
+  }
+}
+
+@keyframes mainColorBlink {
+  0% {
+    background-color: $mainColor;
+  }
+
+  50% {
+    background-color: white;
+  }
+
+  100% {
+    background-color: $mainColor;
   }
 }

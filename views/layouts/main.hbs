@@ -52,11 +52,7 @@
     // ------ 後端使用的 id
     socket.auth = { userId: '{{loginUser.id}}' }
 
-    // ------button function for posting follow like comment reply 
-
-    function notifyForAllSubscribers () {
-      socket.emit('notifyForAllSubscribers')
-    }
+    socket.emit('updateNotification')
 
     socket.on('informSubscribersUpdateNote', () => {
       console.log('收到，馬上跟後端聯絡拿取最新的通知資料')
@@ -65,27 +61,16 @@
 
     socket.on('updateNotification', ({ follow, like, tweet, reply }) => {
       const array = follow.concat(like, tweet, reply)
-      array.sort(function (a, b) {
-        return new Date(b.createdAt) - new Date(a.createdAt)
-      })
-      array.forEach((note) => {
-        console.log("array.forEach ~ note", note)
-        const celebrity = note.celebrity.name
-        if (note.followEvent) {
-          const followingUser = note.followEvent.User.name
-          console.log(`世紀大消息 ! ${celebrity} 追蹤了 ${followingUser} !`)
-        } else if (note.likeEvent) {
-          const likeUser = note.likeEvent.Tweet.User.name
-          console.log(`世紀大消息 ! ${celebrity} 喜歡 ${likeUser} 的推文內容 !`)
-        } else if (note.tweetEvent) {
-          console.log(`世紀大消息 ! ${celebrity} 發了一篇文章 !`)
-        } else if (note.replyEvent) {
-          console.log(`世紀大消息 ! ${celebrity} 回覆了一則 tweet !`)
-        }
+      if (array.length > 0) {
+        $('#tab-notification').addClass('main-color-blink')
+      }
 
-      })
     })
 
+    // ------button function for posting follow like comment reply 
+    function notifyForAllSubscribers () {
+      socket.emit('notifyForAllSubscribers')
+    }
 
   </script>
 </body>

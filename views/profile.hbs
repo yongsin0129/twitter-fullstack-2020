@@ -40,16 +40,12 @@
           style="width:2.5rem;height:2.5rem;position: absolute;bottom: 1.3rem;right: 11.5rem;"><img
             src="/images/icon/private message.png" alt=""></a>
         {{#if user.isSubscribed}}
-
-
         <form action="/subscribe/{{targetUser.id}}?_method=DELETE" method="POST">
           <button type="submit">
             <img src="/images/bell-orange.png" alt="icon"
               style="width:2.5rem;height:2.5rem;position: absolute;bottom: 1.3rem;right: 8rem;">
           </button>
         </form>
-
-
         {{else}}
         <form action="/subscribe" method="POST">
           <button type="submit" class="" name="id" value={{targetUser.id}}>
@@ -65,7 +61,7 @@
         </form>
         {{else}}
         <form action="/followships" method="POST">
-          <button type="submit" class="btn follow-bottom removefollow" name="id" value={{targetUser.id}}>
+          <button type="submit" class="btn follow-bottom removefollow" name="id" value={{targetUser.id}} onclick="notifyForAllSubscribers ()">
             跟隨
           </button>
         </form>
@@ -318,7 +314,7 @@
               </form>
               {{else}}
               <form action="/tweets/{{this.id}}/like" method="POST">
-                <button type="submit"><img src="/images/like.png" alt="like"></button>
+                <button type="submit"><img src="/images/like.png" alt="like" onclick="notifyForAllSubscribers ()"></button>
               </form>
               {{/if}}
               <span>{{this.likedCount}}</span>
