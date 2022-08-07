@@ -54,10 +54,6 @@
 
     // ------button function for posting follow like comment reply 
 
-    function addFollowship_notifyAll (targetId) {
-      socket.emit('notificationFollow', targetId)
-    }
-
     function notifyForAllSubscribers () {
       socket.emit('notifyForAllSubscribers')
     }

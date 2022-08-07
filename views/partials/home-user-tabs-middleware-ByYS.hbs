@@ -25,7 +25,7 @@
             {{else}}
             <form action="/followships" method="POST">
               <button type="submit" class="btn btn-white rounded-pill mt-1 user-follow-bottom" name="id"
-                value={{this.id}} onclick="addFollowship_notifyAll ({{this.id}})">
+                value={{this.id}} onclick="notifyForAllSubscribers()">
                 <span class="p">追隨</span>
               </button>
             </form>
