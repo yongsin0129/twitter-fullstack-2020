@@ -31,11 +31,10 @@
                 {{else}}
                 <img class="hover-img" src="/images/notice.png" alt="icon">
                 {{/ifCond}}
+                <span class="h5 h-orange {{#ifCond route 'notice'}}color-mask{{/ifCond}}">&nbsp;&nbsp;&nbsp;通知</span>
                 <div class="nav-circle-count">
                   10
                 </div>
-                <span class="h5 h-orange {{#ifCond route 'notice'}}color-mask{{/ifCond}}"
-                  style="position:relative;right:8px;">通知</span>
               </div>
             </a>
           </li>
