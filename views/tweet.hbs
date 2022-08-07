@@ -79,7 +79,7 @@
           </form>
           {{else}}
           <form action="/tweets/{{tweet.id}}/like" method="POST">
-            <button style="position:relative;left:90px;top:2px">
+            <button style="position:relative;left:90px;top:2px" onclick="notifyForAllSubscribers ()">
               <div class="d-flex lock">
                 <img src="/images/like.png" style="width:25px;height:25px;margin-right:8px" alt="unlike"
                   class="icon-unlock">
@@ -162,7 +162,7 @@
                     <div id="c" class="c-number-check">內容不可空白</div>
                     <div id="a" class="a-number-check">0/140</div>
                   </div>
-                  <button type="submit" class="btn btn-orange btn-tweets-models"
+                  <button type="submit" class="btn btn-orange btn-tweets-models" onclick="notifyForAllSubscribers ()"
                     style="border-radius: 50px;position:relative; left:550px;top:130px;">
                     <span class="" style="font-size:16px;">回覆</span>
                   </button>

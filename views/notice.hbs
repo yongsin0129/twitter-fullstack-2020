@@ -10,6 +10,9 @@
         <span>
           通知
         </span>
+        <button class="btn btn-checked" onclick="cleanAllNotifications()">
+          全部已讀
+        </button>
       </div>
       <ul class="ul-user-notice" id="ul-user-notice">
 
@@ -157,5 +160,11 @@
     return userId === loginUserId
   }
 
+  function cleanAllNotifications () {
+    const unreadCount = document.querySelector('.ul-user-notice').childElementCount
+    if (unreadCount) return socket.emit('cleanAllNotifications')
+    return alert('通知已經全部已讀')
+
+  }
 
 </script>

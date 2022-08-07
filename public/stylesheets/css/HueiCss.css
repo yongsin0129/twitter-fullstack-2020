@@ -1,3 +1,4 @@
+@charset "UTF-8";
 section#Huei-region body {
   margin: 0;
   padding: 0;
@@ -226,6 +227,16 @@ section#Huei-region .tweet-user-avatar {
 section#Huei-region .flex-nowrap-element {
   white-space: nowrap;
   width: 173px;
+}
+section#Huei-region .flex-nowrap-element .main-color-blink {
+  background-color: #FF6600;
+  animation-name: mainColorBlink;
+  animation-duration: 1s;
+  /*動畫持續時間，單位為秒*/
+  animation-delay: 0.5s;
+  /*動畫延遲開始時間*/
+  animation-iteration-count: infinite;
+  /*動畫次數，infinite 為無限次*/
 }
 section#Huei-region .position-left {
   position: relative;
@@ -592,6 +603,8 @@ section#Huei-region .privacy-notice {
   border-right: 1px solid #E6ECF0;
 }
 section#Huei-region .privacy-notice .user-notice-top {
+  position: relative;
+  display: flex;
   height: 74px;
   width: 640px;
   border-bottom: 1px solid #E6ECF0;
@@ -604,6 +617,13 @@ section#Huei-region .privacy-notice .user-notice-top span {
   font-size: 24px;
   line-height: 26px;
   color: #171725;
+}
+section#Huei-region .privacy-notice .user-notice-top .btn-checked {
+  margin: 1rem 1rem 1rem auto;
+  background-color: #E2E2EA;
+}
+section#Huei-region .privacy-notice .user-notice-top .btn-checked:hover {
+  transform: scale(1.02);
 }
 section#Huei-region .privacy-notice .ul-user-notice {
   max-height: 740px;
@@ -713,4 +733,16 @@ section#Huei-region .change-icon.icon-change {
 }
 section#Huei-region .change-icon:hover .icon-change {
   display: inline !important;
+}
+
+@keyframes mainColorBlink {
+  0% {
+    background-color: #FF6600;
+  }
+  50% {
+    background-color: white;
+  }
+  100% {
+    background-color: #FF6600;
+  }
 }
