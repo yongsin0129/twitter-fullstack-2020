@@ -42,3 +42,40 @@ function timeFormat (timeObj) {
   if (hour >= 12) return `下午${hour - 12}:${minute}`
   else return `上午${hour}:${minute}`
 }
+
+function showMessageOnChatBox (receivedObj) {
+  if (Number(receivedObj.id) !== loginUserId) {
+    // 他人的訊息 --- 出現在左邊
+    const leftHandMessage = document.createElement('li')
+    leftHandMessage.className = 'li-left-message'
+    leftHandMessage.innerHTML =
+      `
+      <div class="message-img">
+        <img src="${receivedObj.avatar}" class=""
+          style="width:40px;height:40px;border-radius: 50px;" alt="Picture">
+      </div>
+      <span class="message-time">${timeFormat(new Date())}</span>
+      <div class="message-span">
+        <span>
+          ${receivedObj.message}
+        </span>
+      </div>
+      `
+    messagesDOM.appendChild(leftHandMessage)
+  } else {
+    // 自已的訊息 --- 出現在右邊
+    const rightHandMessage = document.createElement('li')
+    rightHandMessage.className = 'li-right-message'
+    rightHandMessage.innerHTML =
+      `
+      <span class="message-time">${timeFormat(new Date())}</span>
+      <div class="message-span">
+        <span class="span-message">
+          ${receivedObj.message}
+        </span>
+      </div>
+      `
+    messagesDOM.appendChild(rightHandMessage)
+  }
+  scrollbarRegion.scrollTo(0, scrollbarRegion.scrollHeight)
+}

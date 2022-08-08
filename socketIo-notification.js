@@ -92,7 +92,7 @@ io.on('connection', socket => {
 
   socket.on('checkIfUnreadPrivateMessage', async () => {
     PrivateMessage.findAll({
-      where: { receiverId: loginUserId, read: false },
+      where: { receiverId: loginUserId, unread: true },
       raw: true,
       nest: true
     }).then(result => {

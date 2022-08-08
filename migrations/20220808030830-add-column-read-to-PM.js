@@ -2,13 +2,13 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.addColumn('PrivateMessages', 'read', {
+    await queryInterface.addColumn('PrivateMessages', 'unread', {
       type: Sequelize.BOOLEAN,
-      defaultValue: false
+      defaultValue: true
     })
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.removeColumn('PrivateMessages', 'read')
+    await queryInterface.removeColumn('PrivateMessages', 'unread')
   }
 }

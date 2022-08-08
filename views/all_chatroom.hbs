@@ -1,4 +1,3 @@
-
 <section id="Huei-region" class="">
   <div class="flex-message-page">
     <!--左側導覽列-->
@@ -51,19 +50,19 @@ flex-direction: column;">
       const AllChatroomSocket = io("/all_chatroom")
 
       AllChatroomSocket.auth = { userId: '{{loginUser.id}}' }
+      const loginUserId = Number('{{loginUser.id}}')
 
       AllChatroomSocket.emit('login')
 
       // 抓取必要的 DOM
       const allUserListDOM = document.getElementById('allUserList')
       const scrollbarRegion = document.querySelector('.public-message-middle')
-      const messages = document.getElementById('public-message')
+      const messagesDOM = document.getElementById('public-message')
       const form = document.getElementById('public-message-form')
       const input = document.getElementById('messageInput')
-      const loginUserId = Number('{{loginUser.id}}')
 
 
-      // step2 ---- 掛上監聽器  input 欄位 做 socket.emit 傳入 server
+      // step2 ----  input 欄位 做 socket.emit 傳入 server
       form.addEventListener('submit', function (e) {
         e.preventDefault()
         if (input.value) {
@@ -74,46 +73,13 @@ flex-direction: column;">
       })
 
 
-      // step3 ---- socket 監聽從 server 在 chat message 傳來的資料   
+      // step3 ----  chat message 時時更新聊天室  
       AllChatroomSocket.on('chat message', function (receivedObj) {
-        if (receivedObj.id !== loginUserId) {
-          // 他人的訊息 --- 出現在左邊
-          const leftHandMessage = document.createElement('li')
-          leftHandMessage.className = 'li-left-message'
-          leftHandMessage.innerHTML =
-            `
-            <div class="message-img">
-              <img src="${receivedObj.avatar}" class=""
-                style="width:40px;height:40px;border-radius: 50px;" alt="Picture">
-            </div>
-            <span class="message-time">${timeFormat(new Date())}</span>
-            <div class="message-span">
-              <span>
-                ${receivedObj.message}
-              </span>
-            </div>
-            `
-          messages.appendChild(leftHandMessage)
-        } else {
-          // 自已的訊息 --- 出現在右邊
-          const rightHandMessage = document.createElement('li')
-          rightHandMessage.className = 'li-right-message'
-          rightHandMessage.innerHTML =
-            `
-            <span class="message-time">${timeFormat(new Date())}</span>
-            <div class="message-span">
-              <span class="span-message">
-                ${receivedObj.message}
-              </span>
-            </div>
-            `
-          messages.appendChild(rightHandMessage)
-        }
-        scrollbarRegion.scrollTo(0, scrollbarRegion.scrollHeight)
+        showMessageOnChatBox(receivedObj)
       })
 
 
-      // ---- ---- ---- 全體廣播頻道 ---- ---- ----
+      // ---- ---- ---- 全體廣播頻道 ----刷新在線使用者列表 ----
       AllChatroomSocket.on('broadcast', (usersData) => {
         const usersArray = Object.values(usersData)
 
@@ -149,7 +115,7 @@ flex-direction: column;">
             ${userData.name} 上線了
           </span>
           `
-        messages.appendChild(userStatus)
+        messagesDOM.appendChild(userStatus)
         scrollbarRegion.scrollTo(0, document.body.scrollHeight)
       })
 
@@ -164,7 +130,7 @@ flex-direction: column;">
             ${userData.name} 離線了
           </span>
           `
-        messages.appendChild(userStatus)
+        messagesDOM.appendChild(userStatus)
         scrollbarRegion.scrollTo(0, document.body.scrollHeight)
       })
 

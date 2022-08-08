@@ -30,7 +30,7 @@ io.of('/all_chatroom').on('connection', async socket => {
     io.of('/all_chatroom').emit('broadcast', chattingUsers)
   })
 
-  // --------------   監聽 --------------   chat message emit 的任何訊息
+  // -------------- chat message 時時更新聊天室
   socket.on('chat message', receivedMsg => {
     const returnObj = {
       id: chattingUsers[socket.id].id,

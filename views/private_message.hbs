@@ -59,29 +59,22 @@
       const form = document.getElementById('public-message-form')
       const input = document.getElementById('messageInput')
 
-      //  ---- input 欄位 做 socket.emit 傳入 server
-      form.addEventListener('submit', function (e) {
-        e.preventDefault()
-        if (input.value) {
-          PMsocket.emit('private message', { receivedMsg: input.value, targetUserId })
-          input.value = ''
-        }
-      })
-
-      //  ---- socket 監聽 server 在 chat message 傳來的資料   
-      PMsocket.on('private message', function (receivedObj) {
-        showMessageOnChatBox(receivedObj)
-      })
-
       // ---- ---- ---- 更新私息人員名單 ---- ---- ----
       PMsocket.on('updatePmList', (PmDataArray, targetUserData) => {
         const AllPmMessages = PmDataArray
-        // 顯示 有人傳訊息給你的人員名單
+        // 整理並排序有傳訊息給您的人員名單，未讀在前
         const usersList = PmDataArray
-          .filter((PM) => { return (PM.receiverId === loginUserId || PM.senderId === loginUserId) })
           .map((PM) => {
-            if (PM.receiverId === loginUserId) { return { ...PM.sender, read: PM.read } }
+            if (PM.receiverId === loginUserId) { return { ...PM.sender, unread: PM.unread } }
             else { return PM.receiver }
+          }).sort((a, b) => {
+            if (a.unread && !b.unread) {
+              return -1
+            } else if (!a.unread && b.unread) {
+              return 1
+            } else {
+              return b.createdAt - a.createdAt
+            }
           })
         // 將想要 PM 的對象加到人員名單之中
         if (targetUserData) usersList.push(targetUserData)
@@ -115,22 +108,23 @@
             <span class="li-name" href="/users/${user.id}/tweets">${user.name}</span>
             <span class="li-account" href="/users/${user.id}/tweets">@${user.account}</span>
             
-            ${user.read === 0 ? '<div class="nav-circle-pm nav-circle-count-pm">  </div>' : ''}
+            ${user.unread === 1 ? '<div class="nav-circle-pm nav-circle-count-pm">  </div>' : ''}
           </li>
           `
         })
         allUserListDOM.innerHTML = rawHTML
 
-        // 點擊使用者，room 的連線
+        // addListener 點擊使用者， 創建私人連線
         allUserListDOM.addEventListener('click', (event) => {
           const targetUserCard = event.target.closest('.li-user-online')
           targetUserId = Number(targetUserCard.attributes.userId.value)
           const targetUserName = targetUserCard.attributes.userName.value
           PMessageTitle.children[0].innerText = targetUserName
           targetUserCard.querySelector('.nav-circle-pm')?.remove('nav-circle-count-pm')
-          clearPmCanvasAndShowWait()
-          socketInitAndCreateRoom(tempRoom)
 
+          CreatePrivacyRoom(tempRoom)
+
+          // 呼叫最外層的 Socket ，確認左邊導覽列
           socket.emit('checkIfUnreadPrivateMessage')
         })
 
@@ -144,66 +138,25 @@
         TalkingUserNow.click()
       })
 
+      // 點擊私訊目標使用者 三步緊
+      // ---step1 創建新房間並離開舊房間
+      function CreatePrivacyRoom (tempRoom) {
+        clearPmCanvasAndShowWait()
+        const oldRoom = tempRoom
+        PMsocket.emit('join room', { oldRoom, targetUserId })
+      }
+      // ---step2 房間創建成功，呼叫聊天視窗更新
+      PMsocket.on('createRoomSuccessful', newRoom => {
+        tempRoom = newRoom
+        PMsocket.emit('updateChatBox', targetUserId)
+      })
+      // ---step3 後端回傳私訊的歷史 log，更新聊天視窗
       PMsocket.on('updateChatBox', (receivedPmMessages) => {
         clearPmCanvasAndShow()
         const msgArray = MappingPmToMessageArray(receivedPmMessages)
         msgArray.forEach((msgObj) => { showMessageOnChatBox(msgObj) })
       })
 
-      function clearPmCanvasAndShow () {
-        messagesDOM.innerHTML = `<li class="li-left-message" style="flex: 1;"></li>`
-      }
-
-      function clearPmCanvasAndShowWait () {
-        messagesDOM.innerHTML = `<li class="li-left-message" style="flex: 1;flex-direction: column;margin-top: 35vh;"> 讀取中 請等等</li>`
-      }
-
-      function socketInitAndCreateRoom (tempRoom) {
-        const oldRoom = tempRoom
-        PMsocket.emit('join room', { oldRoom, targetUserId })
-      }
-
-      PMsocket.on('createRoomSuccessful', room => {
-        tempRoom = room
-        PMsocket.emit('updateChatBox', targetUserId)
-      })
-
-      function showMessageOnChatBox (receivedObj) {
-        if (Number(receivedObj.id) !== loginUserId) {
-          // 他人的訊息 --- 出現在左邊
-          const leftHandMessage = document.createElement('li')
-          leftHandMessage.className = 'li-left-message'
-          leftHandMessage.innerHTML =
-            `
-            <div class="message-img">
-              <img src="${receivedObj.avatar}" class=""
-                style="width:40px;height:40px;border-radius: 50px;" alt="Picture">
-            </div>
-            <span class="message-time">${timeFormat(new Date())}</span>
-            <div class="message-span">
-              <span>
-                ${receivedObj.message}
-              </span>
-            </div>
-            `
-          messagesDOM.appendChild(leftHandMessage)
-        } else {
-          // 自已的訊息 --- 出現在右邊
-          const rightHandMessage = document.createElement('li')
-          rightHandMessage.className = 'li-right-message'
-          rightHandMessage.innerHTML =
-            `
-            <span class="message-time">${timeFormat(new Date())}</span>
-            <div class="message-span">
-              <span class="span-message">
-                ${receivedObj.message}
-              </span>
-            </div>
-            `
-          messagesDOM.appendChild(rightHandMessage)
-        }
-        scrollbarRegion.scrollTo(0, scrollbarRegion.scrollHeight)
-      }
 
       function MappingPmToMessageArray (AllPmMessages) {
         const filteredPM = AllPmMessages.filter((pm) => {
@@ -220,7 +173,27 @@
         $('.userCard').find('.nav-circle-pm').removeClass('nav-circle-count-pm')
       }
 
+      function clearPmCanvasAndShow () {
+        messagesDOM.innerHTML = `<li class="li-left-message" style="flex: 1;"></li>`
+      }
 
+      function clearPmCanvasAndShowWait () {
+        messagesDOM.innerHTML = `<li class="li-left-message" style="flex: 1;flex-direction: column;margin-top: 35vh;"> 讀取中 請等等</li>`
+      }
+
+      //  ----聊天室的邏輯區域  input 欄位 
+      form.addEventListener('submit', function (e) {
+        e.preventDefault()
+        if (input.value) {
+          PMsocket.emit('private message', { receivedMsg: input.value, targetUserId })
+          input.value = ''
+        }
+      })
+
+      //  ----聊天室的邏輯區域   接收在 私訊 傳來的資料   
+      PMsocket.on('private message', function (receivedObj) {
+        showMessageOnChatBox(receivedObj)
+      })
 
     </script>
     <!--socketIo script 姞束-->

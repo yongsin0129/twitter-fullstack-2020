@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       senderId: DataTypes.INTEGER,
       receiverId: DataTypes.INTEGER,
-      read: DataTypes.BOOLEAN,
+      unread: DataTypes.BOOLEAN,
       message: DataTypes.TEXT
     },
     {
