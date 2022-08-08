@@ -10,7 +10,9 @@ io.of('/private_message').on('connection', async socket => {
   // saving userId to object with socket ID
   privateUsers[socket.id] = loginUser
 
-  io.of('/private_message').to(socket.id).emit('connected')
+  io.of('/private_message')
+    .to(socket.id)
+    .emit('connected')
 
   socket.on('private message', async ({ receivedMsg, targetUserId }) => {
     const returnObj = {
@@ -32,12 +34,17 @@ io.of('/private_message').on('connection', async socket => {
       .emit('private message', returnObj)
   })
 
-  socket.on('join room', targetUserId => {
-    socket.join(`${loginUserId}to${targetUserId}`)
+  socket.on('join room', ({ oldRoom, targetUserId }) => {
+    socket.leave(oldRoom)
+    const NewRoom = `${loginUserId}to${targetUserId}`
+    socket.join(NewRoom)
     PrivateMessage.update(
       { read: true },
       { where: { receiverId: loginUserId, senderId: targetUserId, read: false } }
     )
+    io.of('/private_message')
+      .to(NewRoom)
+      .emit('createRoomSuccessful', NewRoom)
   })
 
   socket.on('updatePmList', targetUserId => {
@@ -52,7 +59,9 @@ io.of('/private_message').on('connection', async socket => {
       }),
       User.findByPk(targetUserId, { raw: true })
     ]).then(([PmDataArray, targetUserData]) => {
-      io.of('/private_message').emit('updatePmList', PmDataArray, targetUserData)
+      io.of('/private_message')
+        .to(socket.id)
+        .emit('updatePmList', PmDataArray, targetUserData)
     })
   })
 

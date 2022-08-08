@@ -47,6 +47,7 @@
       // 基本資訊
       const loginUserId = Number('{{loginUser.id}}')
       let targetUserId = Number('{{PmTargetUserId}}')
+      let tempRoom = ''
       PMsocket.auth = { userId: '{{loginUser.id}}' }
       PMsocket.emit('updatePmList', targetUserId)
 
@@ -84,9 +85,15 @@
           })
         // 將想要 PM 的對象加到人員名單之中
         if (targetUserData) usersList.push(targetUserData)
-        const deduplicatedUsersList = [...new Set(usersList.map(JSON.stringify))].map(JSON.parse)
-
-
+        // 使用者列表 過濾重複的人名 by id
+        const set = new Set()
+        const deduplicatedUsersList = []
+        usersList.forEach((user) => {
+          if (!set.has(user.id)) {
+            set.add(user.id)
+            deduplicatedUsersList.push(user)
+          }
+        })
         //  userList 顯示邏輯 --- 
         let rawHTML =
           `
@@ -122,7 +129,7 @@
           PMessageTitle.children[0].innerText = targetUserName
           targetUserCard.querySelector('.nav-circle-pm')?.remove('nav-circle-count-pm')
           clearPmCanvasAndShowWait()
-          socketInitAndCreateRoom(PMsocket, targetUserId)
+          socketInitAndCreateRoom(tempRoom)
 
           socket.emit('checkIfUnreadPrivateMessage')
         })
@@ -151,14 +158,15 @@
         messagesDOM.innerHTML = `<li class="li-left-message" style="flex: 1;flex-direction: column;margin-top: 35vh;"> 讀取中 請等等</li>`
       }
 
-      function socketInitAndCreateRoom (PMsocket, targetUserId) {
-        PMsocket.disconnect()
-        PMsocket.connect()
-        PMsocket.on('connected', () => {
-          PMsocket.emit('join room', targetUserId)
-          PMsocket.emit('updateChatBox', targetUserId)
-        })
+      function socketInitAndCreateRoom (tempRoom) {
+        const oldRoom = tempRoom
+        PMsocket.emit('join room', { oldRoom, targetUserId })
       }
+
+      PMsocket.on('createRoomSuccessful', room => {
+        tempRoom = room
+        PMsocket.emit('updateChatBox', targetUserId)
+      })
 
       function showMessageOnChatBox (receivedObj) {
         if (Number(receivedObj.id) !== loginUserId) {

@@ -20,7 +20,6 @@ socket.on('updateNotification', ({ follow, like, tweet, reply }) => {
 })
 
 socket.on('updatePMNumberCount', result => {
-  console.log(result)
   if (result.length > 0) {
     $('#tab-privateMessage').addClass('main-color-blink')
     $('#tab-privateMessage').find('.nav-circle').addClass('nav-circle-count')
