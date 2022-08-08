@@ -4,9 +4,8 @@
     <h4 class="nav-user-title">跟隨誰</h4>
     <ul>
       <p class="list-separate"></p>
-      {{#each recommendedUsers}}
 
-      {{#ifCondFalse this.id ../user.id}}
+      {{#each followings}}
       <li>
         <div class="d-flex align-items-center user-list mt-4">
           <a href="/users/{{this.id}}/tweets">
@@ -17,26 +16,35 @@
                 <p class="text-dark position-left-text">{{this.name}}</p>
                 <p class="text-black-50 position-left-text">@{{this.account}}</p>
               </div>
-              {{#if this.isFollowed}}
+              {{#if isFollowed}}
               <form action="/followships/{{this.id}}?_method=DELETE" method="POST">
-                <button type="submit" class="btn btn-orange rounded-pill mt-1 user-follow-bottom" <span
-                  class="">正在追隨</span>
-                </button>
+                <div class="d-flex change-icon">
+                  <button type="submit" class="btn btn-white rounded-pill mt-1 user-follow-bottom icon-change">
+                    <span class="">取消追隨</span>
+                  </button>
+                  <button type="submit" class="btn btn-orange rounded-pill mt-1 user-follow-bottom icon-unChange">
+                    <span class="">正在追隨</span>
+                  </button>
+                </div>
               </form>
               {{else}}
               <form action="/followships" method="POST">
-                <button type="submit" class="btn btn-white rounded-pill mt-1 user-follow-bottom" name="id"
-                  value={{this.id}}>
-                  <span class="p">追隨</span>
-                </button>
+                <div class="d-flex change-icon">
+                  <button type="submit" class="btn btn-orange rounded-pill mt-1 user-follow-bottom icon-change"
+                    name="id" onclick="notifyForAllSubscribers()" value={{this.id}}>
+                    <span class="p">追隨</span>
+                  </button>
+                  <button type="submit" class="btn btn-white rounded-pill mt-1 user-follow-bottom icon-unChange"
+                    name="id" onclick="notifyForAllSubscribers()" value={{this.id}}>
+                    <span class="p">追隨</span>
+                  </button>
+                </div>
               </form>
               {{/if}}
             </div>
           </a>
         </div>
       </li>
-      {{/ifCondFalse}}
-
       {{/each}}
 
     </ul>

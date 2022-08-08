@@ -869,10 +869,58 @@ section#Huei-region {
 
   }
 
-  .hover-love:hover {
-    filter: invert(90%) sepia(41%) saturate(6991%) hue-rotate(6deg) brightness(109%) contrast(102%);
+  //愛心按鈕 hover 優化
+  .lock:hover .icon-unlock,
+  .lock .icon-lock {
+    display: none;
+  }
+
+  .lock:hover .icon-lock {
+    display: inline;
+    box-shadow: 0 0.5em 0.5em -0.4em var(--hover);
+    transform: translateY(-0.1em);
+  }
+
+  .hover-bigger-icon:hover {
+    box-shadow: 0 0.5em 0.5em -0.4em var(--hover);
+    transform: translateY(-0.1em);
+  }
+
+  //追隨按鈕 hover 優化
+  .change-icon:hover .icon-unChange,
+  .change-icon.icon-change {
+    display: none;
+  }
+
+  .change-icon:hover .icon-change {
+    display: inline !important;
+  }
+
+  //左側導覽列計數圓圈
+  .nav-circle-count {
+    min-width: 20px;
+    position: relative;
+    bottom: 10px;
+    right: 67px;
+    width: auto;
+    height: 20px;
+    padding: 0 3px;
+    font-size: 13px;
+    line-height: 18px;
+    border-radius: 20px;
+    text-align: center;
+    color: #fff;
+    background: #f60;
+    border: 1px solid #fff;
+  }
+
+  //首頁name hover
+  .userName-tweet-hover:hover {
+    color: $mainColor;
   }
 }
+
+
 
 @keyframes mainColorBlink {
   0% {

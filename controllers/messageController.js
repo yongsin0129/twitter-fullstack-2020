@@ -1,5 +1,6 @@
-const { Subscription } = require('../models')
+const { Subscription, User, Tweet } = require('../models')
 const helpers = require('../_helpers')
+const { getUser } = require('../_helpers')
 
 const messageController = {
   getAllChatroom: async (req, res, next) => {
@@ -19,11 +20,23 @@ const messageController = {
     }
   },
   getNotices: async (req, res, next) => {
-    try {
-      res.render('notice')
-    } catch (err) {
-      next(err)
-    }
+    const observedUserId = req.params.id
+    const loginUser = getUser(req)
+
+    return User.findByPk(observedUserId, {
+      nest: true,
+      include: [Tweet, { model: User, as: 'Followings' }]
+    })
+      .then(user => {
+        const result = user.Followings.map(user => {
+          return {
+            ...user.toJSON(),
+            isFollowed: loginUser?.Followings.some(f => f.id === user.id)
+          }
+        }).sort((a, b) => b.Followship.createdAt - a.Followship.createdAt)
+        res.render('notice', { observedUser: user.toJSON(), followings: result })
+      })
+      .catch(err => next(err))
   },
   postSubscribe: async (req, res, next) => {
     try {

@@ -32,7 +32,7 @@
       <!--新增推文 結束-->
 
       <!--每一則 tweet -->
-      <div class=" card-override">
+      <div class="card-override">
         {{#each tweets}}
         <div class="tweet-card d-flex" style="margin:0px;">
           <a class="" href="/users/{{this.User.id}}/tweets">
@@ -41,7 +41,7 @@
           </a>
           <div>
             <div class="head d-flex">
-              <a class="name" href="/users/{{this.User.id}}/tweets">{{this.User.name}}</a>
+              <a class="name userName-tweet-hover" href="/users/{{this.User.id}}/tweets">{{this.User.name}}</a>
               <a class="account" href="/users/{{this.User.id}}/tweets">@{{this.User.account}}</a>
               <div class="time">•{{momentNow this.createdAt}}</div>
             </div>
@@ -53,19 +53,29 @@
             <div class="d-flex">
               <button style="position:relative;bottom:5px;">
                 <img src="/images/comment.png" style="width:13.17px;height:13.17px;margin-right:8px" alt="comment"
-                  data-bs-toggle="modal" data-bs-target="#home-reply-model{{this.id}}">
+                  data-bs-toggle="modal" data-bs-target="#home-reply-model{{this.id}}" class="hover-bigger-icon">
               </button>
               <p class="p">{{this.repliedCount}}</p>
               {{#if this.isLiked}}
               <form action="/tweets/{{this.id}}/unlike" method="POST">
                 <button style="position:relative;bottom:5px;">
-                  <img src="/images/redLove.png" style="width:13.17px;height:13.17px;margin-right:8px" alt="like">
+                  <div class="d-flex lock">
+                    <img src="/images/like.png" style="width:13.17px;height:13.17px;margin-right:8px" alt="unlike"
+                      class="icon-lock">
+                    <img src="/images/redLove.png" style="width:13.17px;height:13.17px;margin-right:8px" alt="unlike"
+                      class="icon-unlock">
+                  </div>
                 </button>
               </form>
               {{else}}
               <form action="/tweets/{{this.id}}/like" method="POST">
                 <button style="position:relative;bottom:5px;" onclick="notifyForAllSubscribers ()">
-                  <img src="/images/like.png" style="width:13.17px;height:13.17px;margin-right:8px" alt="unlike" class="hover-love">
+                  <div class="d-flex lock">
+                    <img src="/images/like.png" style="width:13.17px;height:13.17px;margin-right:8px" alt="unlike"
+                      class="icon-unlock">
+                    <img src="/images/redLove.png" style="width:13.17px;height:13.17px;margin-right:8px" alt="unlike"
+                      class="icon-lock">
+                  </div>
                 </button>
               </form>
               {{/if}}
@@ -135,7 +145,7 @@
           </div>
         </div>
         <script>
-          function countsReply (id, id2, id3) {
+          function countsReply(id, id2, id3) {
             const counts = document.getElementById(id2).value.length
             document.getElementById(id).innerText = counts + '/140'
             if (counts > 140) {
@@ -149,7 +159,7 @@
               document.getElementById(id3).innerText = '內容不可空白'
             }
           }
-          function checkformReply (id2) {
+          function checkformReply(id2) {
             const counts = document.getElementById(id2).value.length
             if (counts > 140) {
               alert('字數超出上限！')
@@ -196,13 +206,13 @@
 
     <!--右側推薦追蹤清單-->
     <section class="right-region-sidebar">
-      {{> home-user-tabs users=users user=user}}
+      {{> home-user-tabs user=user users=users}}
     </section>
   </div>
 
 
   <script>
-    function counts () {
+    function counts() {
       const counts = document.querySelector('#description').value.length
       document.querySelector('.name-count span').innerText = counts + '/140'
       if (counts > 140) {
@@ -216,7 +226,7 @@
         document.querySelector('.name-helper span').innerText = '內容不可空白'
       }
     }
-    function checkform () {
+    function checkform() {
       const counts = document.querySelector('#description').value.length
       if (counts > 140) {
         alert('字數超出上限！')
