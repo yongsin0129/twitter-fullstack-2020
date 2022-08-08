@@ -10,6 +10,8 @@ io.of('/private_message').on('connection', async socket => {
   // saving userId to object with socket ID
   privateUsers[socket.id] = loginUser
 
+  io.of('/private_message').to(socket.id).emit('connected')
+
   socket.on('private message', async ({ receivedMsg, targetUserId }) => {
     const returnObj = {
       id: loginUserId,
@@ -32,6 +34,10 @@ io.of('/private_message').on('connection', async socket => {
 
   socket.on('join room', targetUserId => {
     socket.join(`${loginUserId}to${targetUserId}`)
+    PrivateMessage.update(
+      { read: true },
+      { where: { receiverId: loginUserId, senderId: targetUserId, read: false } }
+    )
   })
 
   socket.on('updatePmList', targetUserId => {
@@ -66,5 +72,9 @@ io.of('/private_message').on('connection', async socket => {
         .to(socket.id)
         .emit('updateChatBox', result)
     })
+  })
+
+  socket.on('readAllPrivateMessage', () => {
+    PrivateMessage.update({ read: true }, { where: { receiverId: loginUserId, read: false } })
   })
 })

@@ -590,6 +590,7 @@ section#ys-FE-users-private-message {
       }
 
       .li-user-online {
+        position:relative;
         width: 379px;
         height: 81px;
         border-bottom: 1px solid #E6ECF0;
@@ -635,6 +636,22 @@ section#ys-FE-users-private-message {
           font-size: 16px;
           line-height: 26px;
           color: #6C757D;
+        }
+
+        .nav-circle-count-pm {
+          position: absolute;
+          top:1.5rem;
+          right: 1.5rem;
+          width: 1.5rem;
+          height: 1.5rem;
+          padding: 0 3px;
+          font-size: 13px;
+          line-height: 18px;
+          border-radius: 20px;
+          text-align: center;
+          color: #fff;
+          background: #f60;
+          border: 1px solid #fff;
         }
       }
     }

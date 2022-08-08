@@ -79,7 +79,7 @@
         const usersList = PmDataArray
           .filter((PM) => { return (PM.receiverId === loginUserId || PM.senderId === loginUserId) })
           .map((PM) => {
-            if (PM.receiverId === loginUserId) { return PM.sender }
+            if (PM.receiverId === loginUserId) { return { ...PM.sender, read: PM.read } }
             else { return PM.receiver }
           })
         // 將想要 PM 的對象加到人員名單之中
@@ -90,9 +90,14 @@
         //  userList 顯示邏輯 --- 
         let rawHTML =
           `
-          <li class="li-user-online">
+          <li class="li-user-online" style="display:flex">
             <span class="user-title-span">訊息</span>
+            <button class="btn btn-outline-second btn-readPM" onclick="readAllPrivateMessage()"
+            style="margin: 1.5rem 1.5rem 1.5rem auto;padding: 0.25rem;">
+              全部已讀
+            </button>
           </li>
+
           `
         deduplicatedUsersList.forEach((user) => {
           rawHTML +=
@@ -102,6 +107,8 @@
               class="tweet-user-avatar" style="width:50px;height:50px;display:inline-block;border-radius: 50%;" alt="Picture">
             <span class="li-name" href="/users/${user.id}/tweets">${user.name}</span>
             <span class="li-account" href="/users/${user.id}/tweets">@${user.account}</span>
+            
+            ${user.read === 0 ? '<div class="nav-circle-pm nav-circle-count-pm">  </div>' : ''}
           </li>
           `
         })
@@ -113,9 +120,11 @@
           targetUserId = Number(targetUserCard.attributes.userId.value)
           const targetUserName = targetUserCard.attributes.userName.value
           PMessageTitle.children[0].innerText = targetUserName
-          socketInitAndCreateRoom(PMsocket, targetUserId)
-          PMsocket.emit('updateChatBox', targetUserId)
+          targetUserCard.querySelector('.nav-circle-pm')?.remove('nav-circle-count-pm')
           clearPmCanvasAndShowWait()
+          socketInitAndCreateRoom(PMsocket, targetUserId)
+
+          socket.emit('checkIfUnreadPrivateMessage')
         })
 
         // 定義正在與之聊天的使用者
@@ -142,10 +151,13 @@
         messagesDOM.innerHTML = `<li class="li-left-message" style="flex: 1;flex-direction: column;margin-top: 35vh;"> 讀取中 請等等</li>`
       }
 
-      function socketInitAndCreateRoom (socket, targetUserId) {
-        socket.disconnect()
-        socket.connect()
-        socket.emit('join room', targetUserId)
+      function socketInitAndCreateRoom (PMsocket, targetUserId) {
+        PMsocket.disconnect()
+        PMsocket.connect()
+        PMsocket.on('connected', () => {
+          PMsocket.emit('join room', targetUserId)
+          PMsocket.emit('updateChatBox', targetUserId)
+        })
       }
 
       function showMessageOnChatBox (receivedObj) {
@@ -193,6 +205,14 @@
         })
         return filteredPM.map((pm) => { return { ...pm.sender, message: pm.message } })
       }
+
+      function readAllPrivateMessage () {
+        PMsocket.emit('readAllPrivateMessage')
+        $('#tab-privateMessage').removeClass('main-color-blink')
+        $('.userCard').find('.nav-circle-pm').removeClass('nav-circle-count-pm')
+      }
+
+
 
     </script>
     <!--socketIo script 姞束-->

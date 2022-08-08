@@ -7,6 +7,7 @@ const {
   NotificationLike,
   NotificationTweet,
   NotificationReply,
+  PrivateMessage,
   Like,
   Tweet,
   Reply
@@ -26,8 +27,6 @@ io.on('connection', socket => {
   })
 
   socket.on('updateNotification', async () => {
-    console.log(`前端使用者 id: ${loginUserId} 要求更新列表`)
-
     setTimeout(() => {
       Promise.all([
         NotificationFollow.findAll({
@@ -88,6 +87,16 @@ io.on('connection', socket => {
       })
     ]).then(() => {
       io.to(`${loginUserId}`).emit('informSubscribersUpdateNote')
+    })
+  })
+
+  socket.on('checkIfUnreadPrivateMessage', async () => {
+    PrivateMessage.findAll({
+      where: { receiverId: loginUserId, read: false },
+      raw: true,
+      nest: true
+    }).then(result => {
+      io.to(socket.id).emit('updatePMNumberCount', result)
     })
   })
 })
