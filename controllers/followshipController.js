@@ -18,6 +18,9 @@ const followshipController = {
       // 查找訂閱 loginUser 的所有 subscriber 並 mapping 為id
       const allSubscribers = await helpers.getAllSubscribers(loginUserId)
 
+      // 將互動對象也加入到訂閱者清單，使互動能通知到他本人
+      allSubscribers.push(`${req.body.id}`)
+
       // 制做 array 準備用在 NotificationFollow bulkCreate
       const createDataArray = allSubscribers.map(id => {
         return {

@@ -99,6 +99,10 @@ const tweetController = {
       // 查找訂閱 loginUser 的所有 subscriber 並 mapping 為id
       const allSubscribers = await helpers.getAllSubscribers(loginUserId)
 
+      // 查找被 like 的 tweet 使用者資料，並加入到訂閱者清單，使互動能通知到他本人
+      const tweetOwnerId = await helpers.findTweetOwnerId(req.params.tweet_id)
+      allSubscribers.push(`${tweetOwnerId}`)
+
       // 制做 array 準備用在 NotificationLike bulkCreate
       const createDataArray = allSubscribers.map(id => {
         return {

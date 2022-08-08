@@ -1,4 +1,4 @@
-const { Subscription } = require('./models')
+const { Subscription, Tweet, User } = require('./models')
 
 function ensureAuthenticated (req) {
   return req.isAuthenticated()
@@ -18,8 +18,19 @@ async function getAllSubscribers (loginUserId) {
   return allSubscribers
 }
 
+async function findTweetOwnerId (tweetId) {
+  // 查找被 like 的 tweet 資料
+  const likedTweet = await Tweet.findByPk(tweetId, {
+    include: User,
+    raw: true,
+    nest: true
+  })
+  return likedTweet.User.id
+}
+
 module.exports = {
   ensureAuthenticated,
   getUser,
-  getAllSubscribers
+  getAllSubscribers,
+  findTweetOwnerId
 }
