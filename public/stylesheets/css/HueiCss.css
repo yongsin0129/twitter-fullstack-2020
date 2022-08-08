@@ -620,6 +620,7 @@ section#Huei-region .privacy-notice .user-notice-top span {
 }
 section#Huei-region .privacy-notice .user-notice-top .btn-checked {
   margin: 1rem 1rem 1rem auto;
+  align-self: center;
   background-color: #E2E2EA;
 }
 section#Huei-region .privacy-notice .user-notice-top .btn-checked:hover {

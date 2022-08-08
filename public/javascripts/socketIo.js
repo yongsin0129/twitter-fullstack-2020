@@ -1,5 +1,9 @@
 socket.emit('updateNotification')
 
+setInterval(() => {
+  socket.emit('updateNotification')
+}, 5000)
+
 socket.on('informSubscribersUpdateNote', () => {
   socket.emit('updateNotification')
 })
@@ -8,6 +12,12 @@ socket.on('updateNotification', ({ follow, like, tweet, reply }) => {
   const array = follow.concat(like, tweet, reply)
   if (array.length > 0) {
     $('#tab-notification').addClass('main-color-blink')
+    $('#tab-notification')
+      .find('.nav-circle')
+      .addClass('nav-circle-count')
+    $('#tab-notification')
+      .find('.nav-circle-count')
+      .html(array.length)
   }
 })
 

@@ -142,8 +142,12 @@
 
   function cleanAllNotifications () {
     const unreadCount = document.querySelector('.ul-user-notice').childElementCount
-    $('#tab-notification').removeClass('main-color-blink')
-    if (unreadCount) return socket.emit('cleanAllNotifications')
+    if (unreadCount) {
+      $('#tab-notification').removeClass('main-color-blink')
+      $('#tab-notification').find('.nav-circle-count').html('')
+      $('#tab-notification').find('.nav-circle').removeClass('nav-circle-count')
+      return socket.emit('cleanAllNotifications')
+    }
     return alert('通知已經全部已讀')
 
   }
