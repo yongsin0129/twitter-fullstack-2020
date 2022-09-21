@@ -4,7 +4,8 @@
 
 ## Live demo
 
-[heroku連結](https://twitter-epcg.herokuapp.com/signin)
+多人聊天室、私訊功能、即時通知功能動畫 demo
+https://skinny-blinker-6e7.notion.site/e8e1c840515a4bd19f302777858478cd
 
 ![demo](https://github.com/HuangYanHuei/twitter-fullstack-2020/blob/master/public/pic/twitter.png)
 
